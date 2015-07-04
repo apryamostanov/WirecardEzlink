@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android" >
+
+    <PreferenceCategory android:title="@string/options" >
+        <!-- <CheckBoxPreference
+            android:defaultValue="true"
+            android:key="preference_sound"
+            android:persistent="true"
+            android:summary="@string/sound2"
+            android:title="@string/sound" /> -->
+        <EditTextPreference
+            android:defaultValue=""
+            android:key="preference_sound"
+            android:persistent="false"
+            android:positiveButtonText="OK"
+            android:summary="@string/sound2"
+            android:title="@string/sound" />
+        <CheckBoxPreference
+            android:defaultValue="true"
+            android:key="preference_vibrate"
+            android:persistent="true"
+            android:summary="@string/vibrate2"
+            android:title="@string/vibrate" />
+        <CheckBoxPreference
+            android:defaultValue="false"
+            android:key="preference_start_scan"
+            android:persistent="true"
+            android:summary="@string/start_scan2"
+            android:title="@string/start_scan" />
+    </PreferenceCategory>
+
+</PreferenceScreen>

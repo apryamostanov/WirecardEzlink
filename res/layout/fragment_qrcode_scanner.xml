@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#76d0e2">
+
+    <TextView 
+        android:id="@+id/ads"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="This is ad"
+        />
+    <ListView
+        android:id="@+id/listview"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@+id/ads"
+        android:background="#ffffff"
+        android:layout_margin="4dp"
+        android:divider="@android:color/darker_gray"
+        android:dividerHeight="1dp" >
+    </ListView>
+</RelativeLayout>
