@@ -253,7 +253,6 @@ public class NFCActivity extends FragmentActivity {
         super.onResume();
         cd.ensureSensorIsOn();
 		mNfcAdapter.enableForegroundDispatch(this, pendingIntent, filters, techList);
-		Log.d("tagCardFragment is ", "null");
     }
 	
 	@Override
@@ -273,7 +272,9 @@ public class NFCActivity extends FragmentActivity {
 		if(Util.getVibratePref(this)) {
 			((Vibrator)getSystemService(Context.VIBRATOR_SERVICE)).vibrate(100L);
 		}
-		handleIntent(intent);
+		if(null != fragmentManager.findFragmentByTag("fragment0") || null != fragmentManager.findFragmentByTag("fragment1")) {
+			handleIntent(intent);
+		}
 	}
 	
 	private void handleIntent(Intent intent) {

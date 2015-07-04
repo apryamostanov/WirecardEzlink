@@ -247,7 +247,7 @@ public class IsoDepReaderTask extends AsyncTask<IsoDep, Void, String> {
 				}
 			} catch (Exception e) {
 				if(e.toString().contains("dead") || e.toString().contains("die")) {
-					result = e.toString();
+					result = e.getMessage();
 				} else {
 					result = ErrorCode.getTagLost();
 				}
