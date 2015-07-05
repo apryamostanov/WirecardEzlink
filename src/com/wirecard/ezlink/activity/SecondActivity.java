@@ -227,7 +227,7 @@ public class SecondActivity extends FragmentActivity implements ActionBar.TabLis
 					StringConstants.MessageRemarks.SCANNING, true);
 			Tag tag = intent.getParcelableExtra(NfcAdapter.EXTRA_TAG);
 			IsoDep isoDep = IsoDep.get(tag);
-			new IsoDepReaderTask(this, null, null, dialog, true).execute(isoDep);
+			new IsoDepReaderTask(this, null, null, dialog, true, "SecondActivity").execute(isoDep);
 		}
 	}
 	
@@ -247,8 +247,6 @@ public class SecondActivity extends FragmentActivity implements ActionBar.TabLis
 		case R.id.phone:
 			Intent i = new Intent(getApplicationContext(), UserSettingActivity.class);
             startActivityForResult(i, 0);
-			Toast.makeText(getBaseContext(), "getVibratePref: " + Util.getVibratePref(this) ,
-					Toast.LENGTH_SHORT).show();
 			break;
 		}
 

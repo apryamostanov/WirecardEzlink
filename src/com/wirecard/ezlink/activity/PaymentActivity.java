@@ -283,14 +283,7 @@ public class PaymentActivity extends FragmentActivity {
 		PaymentFragment paymentFragment = (PaymentFragment) fragmentManager.findFragmentByTag("fragment0");
 		if(paymentFragment != null) {
 			Log.d("PaymentFragment is", " not null");
-//			cardNo_textView = (TextView) paymentFragment.getView().findViewById(R.id.cardNo_textView1);
-//			purseBalance_textView = (TextView) paymentFragment.getView().findViewById(R.id.purseBalance_textView);
-//			paymentAmt_textView = (TextView) paymentFragment.getView().findViewById(R.id.paymentAmt_textView1);
-//			merchantName_textView = (TextView) paymentFragment.getView().findViewById(R.id.merchantName_textView1);
-//			merchantRef_textView = (TextView) paymentFragment.getView().findViewById(R.id.merchantRef_textView);
 			payButton = (Button) paymentFragment.getView().findViewById(R.id.payButton);
-//			guide_textView = (TextView) paymentFragment.getView().findViewById(R.id.guide_textView);
-			
 			showInfo();
 		} else {
 			Log.d("PaymentFragment is", " null");
@@ -330,7 +323,7 @@ public class PaymentActivity extends FragmentActivity {
 			TagCardFragment tagCardFragment = (TagCardFragment) fragmentManager.findFragmentByTag("fragment1");
 			if(tagCardFragment != null) {
 				dialog = ProgressDialog.show(PaymentActivity.this, "Please hold on to your card", "Scanning...", true);
-				new com.wirecard.ezlink.handle.IsoDepReaderTask(this, null, null, dialog, true).execute(isoDep);
+				new com.wirecard.ezlink.handle.IsoDepReaderTask(this, null, null, dialog, true, "PaymentActivity").execute(isoDep);
 			} else {
 				payButton.setOnClickListener(new OnClickListener() {
 					@Override
@@ -453,14 +446,12 @@ public class PaymentActivity extends FragmentActivity {
 							// debit command is successful 
 							if(curentBal2 < Double.parseDouble(purseBalance)) {
 								wsConnection.uploadReceiptData(qrCode, "", new RecieptReqError(ErrorCode.getErrorCode01(), ErrorCode.getDebitCommandSuccessfulButNoResponseFromCard()));
-								Bundle b = new Bundle();
-								b.putString("cardNo", cardNo);
-								b.putString("merchantName", merchantName);
-								b.putString("paymentAmt", paymentAmt);
-								b.putString("prevBal", purseBalance);
-								b.putString("currentBal", String.valueOf(curentBal2));
+								editor.putString("merchantName", merchantName);
+								editor.putString("paymentAmt", paymentAmt);
+								editor.putString("prevBal", purseBalance);
+								editor.putString("currentBal", String.valueOf(curentBal2));
+								editor.commit();
 								Intent in = new Intent(PaymentActivity.this, ConfirmationActivity.class);
-								in.putExtras(b);
 								startActivity(in);
 								finish();
 								return null;
@@ -555,7 +546,6 @@ public class PaymentActivity extends FragmentActivity {
 				String purseData = Util.hexString(purseResult);
 				Log.d("purseData3", purseData);
 				if(purseData.length() < 10) {
-	//				errorCode.sendErrorToReceipt(qrCode, ErrorCode.getErrorCode24() + ":" + ErrorCode.getInvalidCommandFromCard());
 					errorStr = ErrorCode.getInvalidCommandFromCard();
 					return errorStr;
 				}
@@ -587,21 +577,16 @@ public class PaymentActivity extends FragmentActivity {
 //					}.start();
 				}
 				
-				editor.clear();
-				editor.commit();
-				
 				//can not get receipt data from card
 				/*if(noReceiptResponse) {
 					wsConnection.uploadReceiptData(qrCode, "", new RecieptReqError(ErrorCode.getErrorCode01(), ErrorCode.getDebitCommandSuccessfulButNoResponseFromCard()));
 				}*/
-				Bundle b = new Bundle();
-				b.putString("cardNo", cardNo);
-				b.putString("merchantName", merchantName);
-				b.putString("paymentAmt", paymentAmt);
-				b.putString("prevBal", purseBalance);
-				b.putString("currentBal", currentBalance);
+				editor.putString("merchantName", merchantName);
+				editor.putString("paymentAmt", paymentAmt);
+				editor.putString("prevBal", purseBalance);
+				editor.putString("currentBal", currentBalance);
+				editor.commit();
 				Intent in = new Intent(PaymentActivity.this, ConfirmationActivity.class);
-				in.putExtras(b);
 				startActivity(in);
 				finish();
 			}catch (Exception e) {

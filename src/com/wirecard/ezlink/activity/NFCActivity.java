@@ -231,7 +231,6 @@ public class NFCActivity extends FragmentActivity {
             setTitle(mNavigationDrawerItemTitles[position]);
             mDrawerLayout.closeDrawer(mDrawerList);
             if(position == 0) {
-            	Log.e("Start countDownTimer","start");
             	isoDepReaderTask.startCountDownTimer();
             } else {
             	isoDepReaderTask.cancelCountDownTimer();
@@ -288,9 +287,9 @@ public class NFCActivity extends FragmentActivity {
 			TagCardFragment tagCardFragment = (TagCardFragment) fragmentManager.findFragmentByTag("fragment1");
 			if(tagCardFragment != null) {
 				Log.d("tagCardFragment is ", "not null");
-				isoDepReaderTask = new IsoDepReaderTask(this, sharedpreferences, qrCode, dialog, true);
+				isoDepReaderTask = new IsoDepReaderTask(this, sharedpreferences, qrCode, dialog, true, "NFCActivity");
 			} else {
-				isoDepReaderTask = new IsoDepReaderTask(this, sharedpreferences, qrCode, dialog, false);
+				isoDepReaderTask = new IsoDepReaderTask(this, sharedpreferences, qrCode, dialog, false, "NFCActivity");
 			}
 			isoDepReaderTask.execute(isoDep);
 //			new IsoDepReaderTask2().execute(isoDep);

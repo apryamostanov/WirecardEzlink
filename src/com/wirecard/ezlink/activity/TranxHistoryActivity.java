@@ -38,7 +38,7 @@ import android.util.Log;
 import android.widget.ListView;
 import android.widget.TextView;
 
-public class TranxHistoryActivity extends Activity{
+public class TranxHistoryActivity extends Activity {
 	private WebserviceConnection wsConnection;
 	private ArrayList<HashMap<String, String>> list;
 	private ListView lview;
@@ -53,7 +53,8 @@ public class TranxHistoryActivity extends Activity{
 	private String[][] techList;
 	private ConnectionDetector cd;
 	private String cardNo;
-	
+	private String preActivity;
+
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		// TODO Auto-generated method stub
@@ -61,36 +62,40 @@ public class TranxHistoryActivity extends Activity{
 		setContentView(R.layout.fragment_transaction_history);
 		setTitle("Transaction History");
 		cd = new ConnectionDetector(this);
-		dialog = ProgressDialog.show(this, StringConstants.MessageRemarks.PROCESSING,
+		dialog = ProgressDialog.show(this,
+				StringConstants.MessageRemarks.PROCESSING,
 				StringConstants.MessageRemarks.TRANX_HISTORY, true);
 		mNfcAdapter = NfcAdapter.getDefaultAdapter(this);
-	    pendingIntent = PendingIntent.getActivity(
-					this, 0, new Intent(this, getClass()).addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP), 0);
-		filters = new IntentFilter[] { new IntentFilter(NfcAdapter.ACTION_TECH_DISCOVERED) };
-		techList = new String[][] {new String[] { IsoDep.class.getName() } };
+		pendingIntent = PendingIntent.getActivity(this, 0, new Intent(this,
+				getClass()).addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP), 0);
+		filters = new IntentFilter[] { new IntentFilter(
+				NfcAdapter.ACTION_TECH_DISCOVERED) };
+		techList = new String[][] { new String[] { IsoDep.class.getName() } };
 		wsConnection = new WebserviceConnection(this);
 		lview = (ListView) findViewById(R.id.listview);
 		tranxHistoryError = (TextView) findViewById(R.id.tranxHistoryError);
 		cardNoTextView = (TextView) findViewById(R.id.cardNo_textView);
 		balanceTextView = (TextView) findViewById(R.id.purseBalance_textView);
 		expiryDateTextView = (TextView) findViewById(R.id.expiryDate_textView);
-		
+
 		Bundle args = getIntent().getExtras();
 		cardNo = args.getString("cardNo");
 		cardNoTextView.setText(cardNo);
 		balanceTextView.setText(args.getString("purseBalance"));
 		expiryDateTextView.setText(args.getString("expiryDate"));
+		preActivity = args.getString("currentActivity");
 		new TransactionHistory().execute();
-		
+
 	}
-	
+
 	@Override
-    protected void onResume() {
-        super.onResume();
-        cd.ensureSensorIsOn();
-		mNfcAdapter.enableForegroundDispatch(this, pendingIntent, filters, techList);
-    }
-	
+	protected void onResume() {
+		super.onResume();
+		cd.ensureSensorIsOn();
+		mNfcAdapter.enableForegroundDispatch(this, pendingIntent, filters,
+				techList);
+	}
+
 	@Override
 	public void onPause() {
 		super.onPause();
@@ -98,13 +103,21 @@ public class TranxHistoryActivity extends Activity{
 	}
 
 	@Override
-	public void onBackPressed(){
+	public void onBackPressed() {
 		Intent in = new Intent(TranxHistoryActivity.this, SecondActivity.class);
+		if (preActivity.equals("SecondActivity")) {
+			in = new Intent(TranxHistoryActivity.this, SecondActivity.class);
+		} else if (preActivity.equals("NFCActivity")) {
+			in = new Intent(TranxHistoryActivity.this, NFCActivity.class);
+		} else if (preActivity.equals("PaymentActivity")) {
+			in = new Intent(TranxHistoryActivity.this, PaymentActivity.class);
+		} else {
+			in = new Intent(TranxHistoryActivity.this, ConfirmationActivity.class);
+		}
 		startActivity(in);
 		finish();
-		TranxHistoryActivity.super.onBackPressed();
 	}
-	
+
 	class TransactionHistory extends AsyncTask<Void, Void, VDGTranxList> {
 
 		@Override
@@ -142,17 +155,18 @@ public class TranxHistoryActivity extends Activity{
 							+ historyDetail.STATUS);
 				}
 
-				ListviewAdapter adapter = new ListviewAdapter(TranxHistoryActivity.this, list);
+				ListviewAdapter adapter = new ListviewAdapter(
+						TranxHistoryActivity.this, list);
 				lview.setAdapter(adapter);
 			} else {
-				tranxHistoryError.setText(StringConstants.ErrorRemarks.NO_TRANX_HISTORY);
+				tranxHistoryError
+						.setText(StringConstants.ErrorRemarks.NO_TRANX_HISTORY);
 			}
-			
-			if (dialog != null && dialog.isShowing())
-	        {
+
+			if (dialog != null && dialog.isShowing()) {
 				dialog.dismiss();
 				dialog = null;
-	        }
+			}
 		}
 	}
 }

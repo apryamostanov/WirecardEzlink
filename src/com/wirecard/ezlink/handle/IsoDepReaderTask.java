@@ -55,6 +55,7 @@ public class IsoDepReaderTask extends AsyncTask<IsoDep, Void, String> {
 	Toast toast;
 	public static CountDownTimer countDownTimer;
 	public static AlertDialog.Builder alertDialog;
+	private String currentActivity;
 	
 	public IsoDepReaderTask(Context context) {
 		this._context = context;
@@ -96,7 +97,8 @@ public class IsoDepReaderTask extends AsyncTask<IsoDep, Void, String> {
 		
 	}
 	
-	public IsoDepReaderTask(Context context, SharedPreferences sharedpreferences, QRCode qrCode, Dialog dialog, boolean getTranxHistory) {
+	public IsoDepReaderTask(Context context, SharedPreferences sharedpreferences, 
+			QRCode qrCode, Dialog dialog, boolean getTranxHistory, String currentActivity ) {
 		this._context = context;
 		this.activity = (Activity) context;
 		this.sharedpreferences = sharedpreferences;
@@ -104,6 +106,7 @@ public class IsoDepReaderTask extends AsyncTask<IsoDep, Void, String> {
 		this.qrCode = qrCode;
 		this.dialog = dialog;
 		this.getTranxHistory = getTranxHistory;
+		this.currentActivity = currentActivity;
 	}
 
 	public void timeout() {
@@ -113,12 +116,14 @@ public class IsoDepReaderTask extends AsyncTask<IsoDep, Void, String> {
 	// if within 1 minute that device cannot communicate with card then showing a Toast
 	public void startCountDownTimer() {
 		if(null != countDownTimer) {
+			Log.e("Start countDownTimer","start");
 			countDownTimer.start();
 		}
 	}
 	
 	public void cancelCountDownTimer() {
 		if(null != countDownTimer) {
+			Log.e("Cancel countDownTimer","Cancel");
 			countDownTimer.cancel();
 		}
 	}
@@ -195,17 +200,11 @@ public class IsoDepReaderTask extends AsyncTask<IsoDep, Void, String> {
 				}
 				
 				if(getTranxHistory) {
-//					Activity activity = (Activity) _context;
-//					FragmentManager fragmentManager = activity.getFragmentManager();
-//					Fragment tranxHistory = new TransactionHistoryFragment();
-//					Bundle bundle = new Bundle();
-//					bundle.putString("cardNo", cardNo);
-//					tranxHistory.setArguments(bundle);
-//		            fragmentManager.beginTransaction().replace(R.id.content_frame, tranxHistory).commit();
 					Intent in = new Intent(_context, TranxHistoryActivity.class);
 					in.putExtra("cardNo", cardNo);
 					in.putExtra("purseBalance", balance);
 					in.putExtra("expiryDate", purseExpiryDate);
+					in.putExtra("currentActivity", currentActivity);
 					activity.startActivity(in);
 					activity.finish();
 				} else {
@@ -285,7 +284,6 @@ public class IsoDepReaderTask extends AsyncTask<IsoDep, Void, String> {
 			}
 		} else {
 			if(null != countDownTimer) {
-				Log.e("stop countDownTimer", "stop");
 				countDownTimer.cancel();
 			}
 		}

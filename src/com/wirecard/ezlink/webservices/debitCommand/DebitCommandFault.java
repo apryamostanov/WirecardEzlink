@@ -11,6 +11,7 @@ package com.wirecard.ezlink.webservices.debitCommand;
 
 
 import java.util.Hashtable;
+
 import org.ksoap2.serialization.*;
 
 public class DebitCommandFault extends java.lang.Exception implements KvmSerializable
@@ -110,13 +111,16 @@ public class DebitCommandFault extends java.lang.Exception implements KvmSeriali
     {
     }
 
-    @Override
-    public String getInnerText() {
-        return null;
-    }
+	@Override
+	public String getInnerText() {
+		// TODO Auto-generated method stub
+		return null;
+	}
 
-    @Override
-    public void setInnerText(String s) {
+	@Override
+	public void setInnerText(String arg0) {
+		// TODO Auto-generated method stub
+		
+	}
 
-    }
 }

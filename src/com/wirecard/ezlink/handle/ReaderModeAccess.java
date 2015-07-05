@@ -7,13 +7,11 @@ import android.util.Log;
 
 public class ReaderModeAccess {
 	private IsoDep isoDep;
-	private Util common;
 	public String terminalRN;
 	public String purseRequest;
 	
 	public ReaderModeAccess(IsoDep isoDep) {
 		this.isoDep = isoDep;
-		this.common = new Util();
 	}
 	
 	public byte[] init() {
@@ -23,9 +21,9 @@ public class ReaderModeAccess {
 		initByte[5] = 64;
         byte[] initRespose = null;
 		try {
-			Log.d("init()", "request: " + common.hexString(initByte));
+			Log.d("init()", "request: " + Util.hexString(initByte));
 			initRespose = isoDep.transceive(initByte);
-	        Log.d("init()", "response: " + common.hexString(initRespose));
+	        Log.d("init()", "response: " + Util.hexString(initRespose));
 		} catch (IOException e) {
 			
 		}
@@ -38,7 +36,7 @@ public class ReaderModeAccess {
 		byte[] challengeResponse = null;
 		try {
 			challengeResponse = isoDep.transceive(challengeRequest);
-			Log.d("challengeResponse",common.hexString(challengeResponse));
+			Log.d("challengeResponse",Util.hexString(challengeResponse));
 		} catch (IOException e) {
 		}
 		return challengeResponse;
@@ -46,21 +44,21 @@ public class ReaderModeAccess {
 	
 	public String getCardRN(byte[] challengeResponse) {
 		String cardRN;
-		cardRN = common.hexString(challengeResponse).substring(0, 16);
+		cardRN = Util.hexString(challengeResponse).substring(0, 16);
 		return cardRN;
 	}
 	
 	public String getPurseData() {
 		String purseData = null;
 		try {
-			//		String terminalRN = common.getRandomHexString(16);
+			//		String terminalRN = Util.getRandomHexString(16);
 			terminalRN = "CF549C2B7520389C";
 			Log.d("terminalRN", terminalRN);
 			purseRequest ="903203000A1403" + terminalRN;
 			Log.d("Purse Request", purseRequest);
-			byte[] purseByte = common.hexStringToByteArray(purseRequest.toString());
+			byte[] purseByte = Util.hexStringToByteArray(purseRequest.toString());
 			byte[] purseResponse = isoDep.transceive(purseByte);
-			purseData = common.hexString(purseResponse);
+			purseData = Util.hexString(purseResponse);
 			Log.d("PurseData Response", purseData);
 		} catch (IOException e) {
 		}
@@ -68,11 +66,11 @@ public class ReaderModeAccess {
 	}
 	
 	public String getPurseData(String purseRequest) {
-		byte[] purseByte = common.hexStringToByteArray(purseRequest.toString());
+		byte[] purseByte = Util.hexStringToByteArray(purseRequest.toString());
 		String purseData = null;
 		try {
 			byte[] purseResponse = isoDep.transceive(purseByte);
-			purseData = common.hexString(purseResponse);
+			purseData = Util.hexString(purseResponse);
 			Log.d("PurseData Response", purseData);
 		} catch (IOException e) {
 		}
@@ -82,10 +80,10 @@ public class ReaderModeAccess {
 	public String getReceipt(String debitCommand) {
 		String receiptData = null;
 		try {
-			debitCommand = "90340000" + debitCommand;
-			byte[] debitCommandByte = common.hexStringToByteArray(debitCommand);
+			debitCommand = "90340000" + debitCommand + "00";
+			byte[] debitCommandByte = Util.hexStringToByteArray(debitCommand);
 			byte[] receiptResponse = isoDep.transceive(debitCommandByte);
-			receiptData = common.hexString(receiptResponse);
+			receiptData = Util.hexString(receiptResponse);
 			Log.d("ReceiptData", receiptData);
 		} catch (IOException e) {
 		}
