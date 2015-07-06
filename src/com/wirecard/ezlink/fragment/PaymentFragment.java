@@ -3,8 +3,8 @@ package com.wirecard.ezlink.fragment;
 import com.example.R;
 import com.wirecard.ezlink.activity.PaymentActivity;
 import com.wirecard.ezlink.activity.PaymentActivity.IsoDepReaderTask;
+import com.wirecard.ezlink.constants.StringConstants;
 import com.wirecard.ezlink.handle.WebserviceConnection;
-import com.wirecard.ezlink.model.ErrorCode;
 import com.wirecard.ezlink.model.QRCode;
 import com.wirecard.ezlink.webservices.receipt.RecieptReqError;
 
@@ -26,7 +26,6 @@ import android.widget.Button;
 import android.widget.TextView;
 
 public class PaymentFragment extends Fragment {
-	private ErrorCode errorCode;
 	public static TextView error_textView;
 	public static TextView error_content;
 	private TextView guide_textView;
@@ -82,9 +81,9 @@ public class PaymentFragment extends Fragment {
 		
 		if(Double.parseDouble(purseBalance) < Double.parseDouble(paymentAmt)) {
 			error_textView.setVisibility(View.VISIBLE);
-			error_content.setText(ErrorCode.getInsufficientBalance());
+			error_content.setText(StringConstants.ErrorDecription.INSUFFICIENT_BALANCE);
 			payButton.setVisibility(View.INVISIBLE);
-			wsConnection.uploadReceiptData(qrCode, "", new RecieptReqError(ErrorCode.getErrorCode20(), ErrorCode.getInsufficientBalance()));
+			wsConnection.uploadReceiptData(qrCode, "", new RecieptReqError(StringConstants.ErrorCode.ERROR_CODE_20, StringConstants.ErrorDecription.INSUFFICIENT_BALANCE));
 		}
 		
 		payButton.setOnClickListener(new OnClickListener() {

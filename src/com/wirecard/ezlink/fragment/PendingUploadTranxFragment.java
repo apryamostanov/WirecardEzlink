@@ -53,22 +53,24 @@ public class PendingUploadTranxFragment extends Fragment {
 		return rootView;
 	}
 
-	private class ReceiptAsyncTask extends AsyncTask<List<ReceiptRequest>, Integer, String> {
+	private class ReceiptAsyncTask extends AsyncTask<List<ReceiptRequest>, Integer, Boolean> {
 		@Override
-		protected String doInBackground(List<ReceiptRequest>... params) {
-			String error = null;
+		protected Boolean doInBackground(List<ReceiptRequest>... params) {
+			boolean uploadSuccess = false;
+			
 			for (int i = 0; i < params[0].size(); i++) {
 				try {
 //					SystemClock.sleep(1000);
 					ReceiptRequest receipt = params[0].get(i);
 					publishProgress(params[0].size() - i);
-					wsConnection.uploadReceiptDataAgain(receipt);
+					uploadSuccess = wsConnection.uploadReceiptDataAgain(receipt);
 				} catch (Exception e) {
-					error = e.toString();
+					Log.e("Pending Upload Tranx Error: ", e.toString());
+					return false;
 				}
 			}
 
-			return error;
+			return uploadSuccess;
 		}
 
 		@Override
@@ -77,9 +79,9 @@ public class PendingUploadTranxFragment extends Fragment {
 		}
 
 		@Override
-		protected void onPostExecute(String result) {
-			if(result != null) {
-				status.setText("There is some problem to upload pending transaction");
+		protected void onPostExecute(Boolean result) {
+			if(result == false) {
+				status.setText("There is some problems to upload pending transaction");
 			} else {
 				status.setText("There is no pending upload transaction");
 			}

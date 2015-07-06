@@ -37,9 +37,7 @@ import com.wirecard.ezlink.activity.TranxHistoryActivity;
 import com.wirecard.ezlink.constants.StringConstants;
 import com.wirecard.ezlink.fragment.NFCFragment;
 import com.wirecard.ezlink.fragment.TagCardFragment;
-import com.wirecard.ezlink.fragment.TransactionHistoryFragment;
 import com.wirecard.ezlink.model.Card;
-import com.wirecard.ezlink.model.ErrorCode;
 import com.wirecard.ezlink.model.QRCode;
 
 public class IsoDepReaderTask extends AsyncTask<IsoDep, Void, String> {
@@ -178,7 +176,7 @@ public class IsoDepReaderTask extends AsyncTask<IsoDep, Void, String> {
 				Log.d("PurseData Response", purseData);
 				if(purseData.length() < 48) {
 //					errorCode.sendErrorToReceipt(qrCode, ErrorCode.getErrorCode24() + ":" + ErrorCode.getInvalidCommandFromCard());
-					result = ErrorCode.getInvalidCommandFromCard();
+					result = StringConstants.ErrorDecription.INVALID_COMMAND_FROM_CARD;
 					return result;
 				}
 				String cardNo = card.getCardNo(purseData);
@@ -248,7 +246,7 @@ public class IsoDepReaderTask extends AsyncTask<IsoDep, Void, String> {
 				if(e.toString().contains("dead") || e.toString().contains("die")) {
 					result = e.getMessage();
 				} else {
-					result = ErrorCode.getTagLost();
+					result = StringConstants.ErrorDecription.TAG_LOST;
 				}
 				Log.e("doInBackgroundError CATCH", "" +result);
 			} finally {

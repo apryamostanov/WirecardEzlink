@@ -35,9 +35,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 public class WelcomeActivity extends Activity {
-	private WebserviceConnection wsConnection;
 	private Dialog dialog;
-	private boolean uploadToHost = false;
 	ImageView welcome;
 	AnimationDrawable myAnimationDrawable;
 	
@@ -50,85 +48,12 @@ public class WelcomeActivity extends Activity {
 		welcome = (ImageView) findViewById(R.id.welcome);
 		myAnimationDrawable = (AnimationDrawable) welcome
 				.getDrawable();
-/*		
-NfcAdapter mNfcAdapter = NfcAdapter.getDefaultAdapter(this);
 		
-		if(!(mNfcAdapter.isEnabled())){
-			//finish();
-			
-			 new AlertDialog.Builder(this)
-		        .setTitle("Enable NFC..!!")
-		        .setMessage("Please Enable NFC to do payment..")
-		       // .setNegativeButton(android.R.string.no, null)
-		        .setPositiveButton(android.R.string.yes, new android.content.DialogInterface.OnClickListener() {
-		        	/*
-		            public void onClick(DialogInterface arg0, int arg1) {
-		                WelcomeActivity.super.onBackPressed();
-		            }
-		            
-
-					
-					public void onClick(DialogInterface arg0, int arg) {
-						
-						Intent setnfc = new Intent(Settings.ACTION_NFC_SETTINGS);                             
-						startActivity(setnfc);	
-						
-					}
-
-					
-		        }).create().show();
-			
-			
-			
-		}
-	*/	
-		
-		wsConnection = new WebserviceConnection(this);
-		//check there are any Receipt requests have send to host yet.
-		DBHelper db = new DBHelper(this);
-		List<ReceiptRequest> list = db.getAllReceiptRequest();
-		uploadToHost = list.isEmpty()? false:true;
-		Log.d("uploadToHost", String.valueOf(uploadToHost));
-		
-		if(uploadToHost) {
-			dialog = ProgressDialog.show(WelcomeActivity.this, "There are " + list.size() + " Receipt Request need to upload to host", "Please wait...", true);
-		} 
-		new ReceiptAsyncTask().execute(list);
+		final AnimationDrawable drawable = (AnimationDrawable) welcome.getDrawable();
+		drawable.start();
+		checkIfAnimationDone(drawable);
 	}
 	
-	private class ReceiptAsyncTask extends AsyncTask<List<ReceiptRequest>, Integer, Void> {
-		@Override
-		protected Void doInBackground(List<ReceiptRequest>... params) {
-			try {
-				for(int i=0; i<params[0].size();i++) {
-					ReceiptRequest receipt = params[0].get(i);
-					publishProgress(params[0].size() - i);
-//					wsConnection.uploadReceiptDataAgain(receipt);
-				}
-			} catch(Exception e) {
-				
-			}
-			return null;
-		}
-
-		@Override
-		protected void onProgressUpdate(Integer... values) {
-			dialog.setTitle("There are " + values[0] + " Receipt Request need to upload to host");
-		}
-
-		@Override
-		protected void onPostExecute(Void result) {
-			if(uploadToHost) {
-				dialog.dismiss();
-			}
-//					welcome.setBackgroundResource(R.drawable.welcome_animation);
-//					AnimationDrawable drawable = (AnimationDrawable) welcome.getBackground();
-					final AnimationDrawable drawable = (AnimationDrawable) welcome.getDrawable();
-					drawable.start();
-					checkIfAnimationDone(drawable);
-		}
-		
-	}
 	
 	private void checkIfAnimationDone(AnimationDrawable anim){
 	    final AnimationDrawable a = anim;

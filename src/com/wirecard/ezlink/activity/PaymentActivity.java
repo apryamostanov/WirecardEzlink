@@ -18,14 +18,12 @@ import com.wirecard.ezlink.fragment.HelpFragment;
 import com.wirecard.ezlink.fragment.PaymentFragment;
 import com.wirecard.ezlink.fragment.TagCardFragment;
 import com.wirecard.ezlink.fragment.TermsAndConditionsFragment;
-import com.wirecard.ezlink.fragment.TransactionHistoryFragment;
 import com.wirecard.ezlink.handle.Util;
 import com.wirecard.ezlink.handle.ConnectionDetector;
 import com.wirecard.ezlink.handle.IsoDepReaderTask;
 import com.wirecard.ezlink.handle.ReaderModeAccess;
 import com.wirecard.ezlink.handle.WebserviceConnection;
 import com.wirecard.ezlink.model.Card;
-import com.wirecard.ezlink.model.ErrorCode;
 import com.wirecard.ezlink.model.QRCode;
 import com.wirecard.ezlink.navigationdrawer.DrawerItemCustomAdapter;
 import com.wirecard.ezlink.navigationdrawer.ObjectDrawerItem;
@@ -83,7 +81,6 @@ public class PaymentActivity extends FragmentActivity {
 	private String cardNo;
 	private boolean detectCard;
 	private String debitCommand;
-	private ErrorCode errorCode;
 	private String paymentAmt;
 	private String merchantName;
 	private String purseBalance;
@@ -125,15 +122,11 @@ public class PaymentActivity extends FragmentActivity {
 		// list the drawer items
 		ObjectDrawerItem[] drawerItem = new ObjectDrawerItem[5];
 
-		drawerItem[0] = new ObjectDrawerItem(R.drawable.ic_action_copy,
-				"Payment");
-		drawerItem[1] = new ObjectDrawerItem(R.drawable.ic_action_share,
-				"Transaction History");
-		drawerItem[2] = new ObjectDrawerItem(R.drawable.ic_action_share,
-				"Contact");
-		drawerItem[3] = new ObjectDrawerItem(R.drawable.ic_action_share,
-				"Terms & Conditions");
-		drawerItem[4] = new ObjectDrawerItem(R.drawable.ic_action_share, "Help");
+		drawerItem[0] = new ObjectDrawerItem(R.drawable.ic_action_copy, StringConstants.MessageRemarks.PAYMENT);
+		drawerItem[1] = new ObjectDrawerItem(R.drawable.ic_action_share, StringConstants.MessageRemarks.TRANX_HISTORY_STR);
+		drawerItem[2] = new ObjectDrawerItem(R.drawable.ic_action_share, StringConstants.MessageRemarks.CONTACT);
+		drawerItem[3] = new ObjectDrawerItem(R.drawable.ic_action_share, StringConstants.MessageRemarks.TERMS_CONDITIONS);
+		drawerItem[4] = new ObjectDrawerItem(R.drawable.ic_action_share, StringConstants.MessageRemarks.HELP);
 
 		// Pass the folderData to our ListView adapter
 		DrawerItemCustomAdapter adapter = new DrawerItemCustomAdapter(this,
@@ -182,7 +175,6 @@ public class PaymentActivity extends FragmentActivity {
 		sharedPreferences = getSharedPreferences("MyPref", Context.MODE_PRIVATE);
 		editor = sharedPreferences.edit();
 		card = new Card();
-		errorCode = new ErrorCode(this);
 		cd = new ConnectionDetector(this);
 		mNfcAdapter = NfcAdapter.getDefaultAdapter(this);
 		wsConnection = new WebserviceConnection(this);
@@ -322,13 +314,13 @@ public class PaymentActivity extends FragmentActivity {
 			final IsoDep isoDep = IsoDep.get(tag);
 			TagCardFragment tagCardFragment = (TagCardFragment) fragmentManager.findFragmentByTag("fragment1");
 			if(tagCardFragment != null) {
-				dialog = ProgressDialog.show(PaymentActivity.this, "Please hold on to your card", "Scanning...", true);
+				dialog = ProgressDialog.show(PaymentActivity.this, StringConstants.MessageRemarks.HOLD_CARD, StringConstants.MessageRemarks.SCANNING, true);
 				new com.wirecard.ezlink.handle.IsoDepReaderTask(this, null, null, dialog, true, "PaymentActivity").execute(isoDep);
 			} else {
 				payButton.setOnClickListener(new OnClickListener() {
 					@Override
 					public void onClick(View arg0) {
-						dialog = ProgressDialog.show(PaymentActivity.this, "Processing", "Please wait while your transaction is being processed...", true);
+						dialog = ProgressDialog.show(PaymentActivity.this, StringConstants.MessageRemarks.PROCESSING, StringConstants.MessageRemarks.TRANX_HISTORY, true);
 						// Request : Debit Command
 						if(tapCardAgain) {
 							new CurrentBalanceTask().execute(isoDep);
@@ -350,7 +342,6 @@ public class PaymentActivity extends FragmentActivity {
 		protected String doInBackground(IsoDep... params) {
 			Log.e("PAYMENT ACTIVITY", "ISODEPREADER TASK DO in Back ground..");
 			String errorStr = null;
-			try{
 			IsoDep isoDep = params[0];
 			
 			if (isoDep != null) {
@@ -383,12 +374,12 @@ public class PaymentActivity extends FragmentActivity {
 					Log.d("purseData2", purseData);
 					if(purseData.length() < 48) {
 //						errorCode.sendErrorToReceipt(qrCode, ErrorCode.getErrorCode24() + ":" + ErrorCode.getInvalidCommandFromCard());
-						errorStr = ErrorCode.getInvalidCommandFromCard();
+						errorStr = StringConstants.ErrorDecription.INVALID_COMMAND_FROM_CARD;
 						return errorStr;
 					}
 					String cardNumber = card.getCardNo(purseData);
 					if(!cardNo.equals(cardNumber)) {
-						wsConnection.uploadReceiptData(qrCode, "", new RecieptReqError(ErrorCode.getErrorCode15(), ErrorCode.getInvalidCard()));
+						wsConnection.uploadReceiptData(qrCode, "", new RecieptReqError(StringConstants.ErrorCode.ERROR_CODE_15, StringConstants.ErrorDecription.INVALID_CARD));
 						errorStr = getResources().getString(R.string.error_invalid_card);
 						return errorStr;
 					}
@@ -405,7 +396,7 @@ public class PaymentActivity extends FragmentActivity {
 						//check if errorCode is null or not. If it is 12, so payment is timeout
 						String errorCode = sharedPreferences.getString("errorCode", null);
 						if(errorCode != null && errorCode.equals("12")) {
-							errorStr = ErrorCode.getTimeOut();
+							errorStr = StringConstants.ErrorDecription.COMMUNICATION_TIMEOUT;
 							editor.putString("errorCode", null);
 							editor.commit();
 							return errorStr;
@@ -439,13 +430,13 @@ public class PaymentActivity extends FragmentActivity {
 							String purseData2 = Util.hexString(purseResult2);
 							if(purseData2.length() < 48) {
 //								errorCode.sendErrorToReceipt(qrCode, ErrorCode.getErrorCode24() + ":" + ErrorCode.getInvalidCommandFromCard());
-								errorStr = ErrorCode.getInvalidCommandFromCard();
+								errorStr = StringConstants.ErrorDecription.INVALID_COMMAND_FROM_CARD;
 								return errorStr;
 							}
 							Double curentBal2 = Double.parseDouble(card.getPurseBal(purseData2));
 							// debit command is successful 
 							if(curentBal2 < Double.parseDouble(purseBalance)) {
-								wsConnection.uploadReceiptData(qrCode, "", new RecieptReqError(ErrorCode.getErrorCode01(), ErrorCode.getDebitCommandSuccessfulButNoResponseFromCard()));
+								wsConnection.uploadReceiptData(qrCode, "", new RecieptReqError(StringConstants.ErrorCode.ERROR_CODE_01, StringConstants.ErrorDecription.DEBIT_COMMAND_SUCCESSFUL_BUT_NO_RESPONSE_FROM_CARD));
 								editor.putString("merchantName", merchantName);
 								editor.putString("paymentAmt", paymentAmt);
 								editor.putString("prevBal", purseBalance);
@@ -462,36 +453,32 @@ public class PaymentActivity extends FragmentActivity {
 							}
 						}
 						
-						Log.d("RECIEPT", "++CALL WS++"+System.currentTimeMillis());
-						// Upload receipt data
-						wsConnection.uploadReceiptData(qrCode, receiptData, new RecieptReqError(ErrorCode.getErrorCode00(), ErrorCode.getSuccessful()));
-						Log.d("RECIEPT", "++RESULT WS++"+System.currentTimeMillis());
-						
-						new CurrentBalanceTask().execute(isoDep);
+							Log.d("RECIEPT", "++CALL WS++"+System.currentTimeMillis());
+							// Upload receipt data
+							wsConnection.uploadReceiptData(qrCode, receiptData, new RecieptReqError(StringConstants.ErrorCode.ERROR_CODE_00, StringConstants.ErrorDecription.SUCCESSFUL));
+							Log.d("RECIEPT", "++RESULT WS++"+System.currentTimeMillis());
+							
+							new CurrentBalanceTask().execute(isoDep);
 					}
 					else{
-						errorStr=ErrorCode.getConnectionIssue();
+						errorStr=StringConstants.ErrorDecription.CONNECTION_ISSUE;
 						return errorStr;
 					}
 					
 				}catch (Exception e) {
-					errorStr=ErrorCode.getTagLost();
+					errorStr=StringConstants.ErrorDecription.TAG_LOST;
 					Log.e("doInBackgroundError", e.toString());
 				} finally {
 					//errorStr="TAG LOST";
 					try {
 						isoDep.close();
 					}catch (IOException e) {
-						errorStr=ErrorCode.getConnectionCloseIssue();
+						errorStr=StringConstants.ErrorDecription.CONNECTION_CLOSING_ISSUE;
 //						errorCode.sendError(qrCode, e.getMessage());
 						Log.e("doInBackgroundErrorfINALLY", e.getMessage());
 					}
 					
 				}
-			}
-			}
-			catch(Exception e){
-				errorStr=ErrorCode.getConnectionIssue();
 			}
 			return errorStr;
 		}
@@ -546,14 +533,14 @@ public class PaymentActivity extends FragmentActivity {
 				String purseData = Util.hexString(purseResult);
 				Log.d("purseData3", purseData);
 				if(purseData.length() < 10) {
-					errorStr = ErrorCode.getInvalidCommandFromCard();
+					errorStr = StringConstants.ErrorDecription.INVALID_COMMAND_FROM_CARD;
 					return errorStr;
 				}
 				
 				String cardNumber = card.getCardNo(purseData);
 				if(!cardNo.equals(cardNumber)) {
-					wsConnection.uploadReceiptData(qrCode, "", new RecieptReqError(ErrorCode.getErrorCode15(), ErrorCode.getInvalidCard()));
-					errorStr = getResources().getString(R.string.error_invalid_card);
+					wsConnection.uploadReceiptData(qrCode, "", new RecieptReqError(StringConstants.ErrorCode.ERROR_CODE_15, StringConstants.ErrorDecription.INVALID_CARD));
+					errorStr = StringConstants.ErrorDecription.INVALID_CARD;
 					return errorStr;
 				}
 				
@@ -563,24 +550,11 @@ public class PaymentActivity extends FragmentActivity {
 				// check the card balance is correct after payment is successful by comparing with  old and new balances.
 				boolean diffirentBalance = card.checkCurrentBalance(currentBalance, purseBalance, paymentAmt);
 				if(!diffirentBalance) {
-//					wsConnection.uploadReceiptData(qrCode, "", new RecieptReqError(ErrorCode.getErrorCode15(), ErrorCode.getInvalidCard()));
-					errorStr = "Card balance is not correct";
+					wsConnection.uploadReceiptData(qrCode, "", new RecieptReqError(StringConstants.ErrorCode.ERROR_CODE_34, StringConstants.ErrorDecription.CARD_BALANCE_IS_NOT_CORRECT));
+					errorStr = StringConstants.ErrorDecription.CARD_BALANCE_IS_NOT_CORRECT;
 					return errorStr;
-//					final Toast toast = Toast.makeText(PaymentActivity.this, "Card balance is not correct", Toast.LENGTH_LONG);
-//					toast.show();
-//					new CountDownTimer(4000, 1000)
-//					{
-//					    public void onTick(long millisUntilFinished) {toast.show();}
-//					    public void onFinish() {
-//					    	toast.show();
-//					    }
-//					}.start();
 				}
 				
-				//can not get receipt data from card
-				/*if(noReceiptResponse) {
-					wsConnection.uploadReceiptData(qrCode, "", new RecieptReqError(ErrorCode.getErrorCode01(), ErrorCode.getDebitCommandSuccessfulButNoResponseFromCard()));
-				}*/
 				editor.putString("merchantName", merchantName);
 				editor.putString("paymentAmt", paymentAmt);
 				editor.putString("prevBal", purseBalance);
@@ -590,7 +564,7 @@ public class PaymentActivity extends FragmentActivity {
 				startActivity(in);
 				finish();
 			}catch (Exception e) {
-				errorStr=ErrorCode.getTagLost();
+				errorStr=StringConstants.ErrorDecription.TAG_LOST;
 				Log.e("doInBackgroundError", e.toString());
 			}
 			return errorStr;
@@ -625,32 +599,17 @@ public class PaymentActivity extends FragmentActivity {
 	}
 	
 	public void onBackPressed(){
-		//dialog.dismiss();
-		/*
-		Intent in = new Intent(PaymentActivity.this, NFCActivity.class);
-		
-		startActivity(in);
-		finish();
-		PaymentActivity.super.onBackPressed();
-		 */
-		
-		//---------------------
 		 new AlertDialog.Builder(this)
-	        .setTitle("Scan again..!!")
-	        .setMessage("Are you sure you want to scan QR code again..?")
+	        .setTitle(StringConstants.MessageRemarks.SCAN_AGAIN)
+	        .setMessage(StringConstants.MessageRemarks.SCAN_AGAIN_MSG)
 	        .setNegativeButton(android.R.string.no, null)
 	        .setPositiveButton(android.R.string.yes, new android.content.DialogInterface.OnClickListener() {
 				
 				public void onClick(DialogInterface arg0, int arg) {
 					Intent in = new Intent(PaymentActivity.this, SecondActivity.class);
-					
 					startActivity(in);
 					finish();
-					PaymentActivity.super.onBackPressed();
-						
 				}
-
-				
 	        }).create().show();
 	       
 	}

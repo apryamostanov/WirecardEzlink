@@ -140,10 +140,8 @@ public class SecondActivity extends FragmentActivity implements ActionBar.TabLis
         if (firstTime && Util.getStartScanPref(getApplicationContext()))
         {
         	Intent intent = new Intent(this, QRCodeScannerActivity.class);
-//            intent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT | Intent.FLAG_ACTIVITY_PREVIOUS_IS_TOP);
         	startActivity(intent);
             finish();
-//            return;
         }
 	}
 

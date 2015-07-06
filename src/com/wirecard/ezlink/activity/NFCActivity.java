@@ -5,21 +5,16 @@ import java.math.BigDecimal;
 
 import com.example.R;
 import com.wirecard.ezlink.constants.StringConstants;
-import com.wirecard.ezlink.fragment.ConfirmationFragment;
-import com.wirecard.ezlink.fragment.ContactFragment;
 import com.wirecard.ezlink.fragment.HelpFragment;
 import com.wirecard.ezlink.fragment.NFCFragment;
-import com.wirecard.ezlink.fragment.PaymentFragment;
 import com.wirecard.ezlink.fragment.TagCardFragment;
 import com.wirecard.ezlink.fragment.TermsAndConditionsFragment;
-import com.wirecard.ezlink.fragment.TransactionHistoryFragment;
 import com.wirecard.ezlink.handle.Util;
 import com.wirecard.ezlink.handle.ConnectionDetector;
 import com.wirecard.ezlink.handle.IsoDepReaderTask;
 import com.wirecard.ezlink.handle.ReaderModeAccess;
 import com.wirecard.ezlink.handle.WebserviceConnection;
 import com.wirecard.ezlink.model.Card;
-import com.wirecard.ezlink.model.ErrorCode;
 import com.wirecard.ezlink.model.QRCode;
 import com.wirecard.ezlink.navigationdrawer.DrawerItemCustomAdapter;
 import com.wirecard.ezlink.navigationdrawer.ObjectDrawerItem;
@@ -27,12 +22,10 @@ import com.wirecard.ezlink.navigationdrawer.ObjectDrawerItem;
 import android.nfc.NfcAdapter;
 import android.nfc.Tag;
 import android.nfc.tech.IsoDep;
-import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Vibrator;
 import android.annotation.TargetApi;
-import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.PendingIntent;
 import android.app.ProgressDialog;
@@ -100,12 +93,10 @@ public class NFCActivity extends FragmentActivity {
 		// list the drawer items
 		ObjectDrawerItem[] drawerItem = new ObjectDrawerItem[4];
 
-		drawerItem[0] = new ObjectDrawerItem(R.drawable.ic_action_copy,
-				"Tap Card");
-		drawerItem[1] = new ObjectDrawerItem(R.drawable.ic_contact, "Transaction History");
-		drawerItem[2] = new ObjectDrawerItem(R.drawable.ic_term,
-				"Terms & Conditions");
-		drawerItem[3] = new ObjectDrawerItem(R.drawable.ic_action_share, "Help");
+		drawerItem[0] = new ObjectDrawerItem(R.drawable.ic_action_copy,	StringConstants.MessageRemarks.TAP_CARD);
+		drawerItem[1] = new ObjectDrawerItem(R.drawable.ic_contact, StringConstants.MessageRemarks.TRANX_HISTORY_STR);
+		drawerItem[2] = new ObjectDrawerItem(R.drawable.ic_term, StringConstants.MessageRemarks.TERMS_CONDITIONS);
+		drawerItem[3] = new ObjectDrawerItem(R.drawable.ic_action_share, StringConstants.MessageRemarks.HELP);
 
 		// Pass the folderData to our ListView adapter
 		DrawerItemCustomAdapter adapter = new DrawerItemCustomAdapter(this,
@@ -393,7 +384,7 @@ public class NFCActivity extends FragmentActivity {
 	@Override
 	public void onBackPressed(){
 		 new AlertDialog.Builder(this)
-	        .setTitle("Scan again..!!")
+	        .setTitle(StringConstants.MessageRemarks.SCAN_AGAIN)
 	        .setMessage(StringConstants.MessageRemarks.SCAN_AGAIN_MSG)
 	        .setNegativeButton(android.R.string.no, null)
 	        .setPositiveButton(android.R.string.yes, new android.content.DialogInterface.OnClickListener() {

@@ -15,7 +15,6 @@ import android.util.Log;
 import android.widget.Toast;
 
 import com.example.R.string;
-import com.wirecard.ezlink.model.ErrorCode;
 import com.wirecard.ezlink.model.QRCode;
 import com.wirecard.ezlink.model.ReceiptRequest;
 import com.wirecard.ezlink.sqlite.DBHelper;
@@ -132,6 +131,7 @@ public class WebserviceConnection {
 	}
 	
 	public String uploadReceiptData(QRCode qrCode, String receiptData, RecieptReqError reqError) {
+		
 		String uploadResult = null;
 		SharedPreferences sharedPreferences = _context.getSharedPreferences("MyPref", Context.MODE_PRIVATE);
 		String merchantNo = qrCode.getQR_MER_ID();
@@ -168,7 +168,7 @@ public class WebserviceConnection {
 		return uploadResult;
 	}
 	
-	public void uploadReceiptDataAgain(ReceiptRequest receiptRequest) {
+	public boolean uploadReceiptDataAgain(ReceiptRequest receiptRequest) {
 		Date dateNow = new Date();
 		SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy HHmmss");
 		String date = dateFormat.format(dateNow);
@@ -189,13 +189,14 @@ public class WebserviceConnection {
 			com.wirecard.ezlink.webservices.receipt.EZLING_WS_REQ_BODY ezling_WS_REQ_BODY = new com.wirecard.ezlink.webservices.receipt.EZLING_WS_REQ_BODY(recieptReq, reqError);
 			
 			com.wirecard.ezlink.webservices.receipt.EZLING_WS_RES_ENV ezling_WS_RES_ENV = recieptSoap.Reciept(ezling_WS_HEADER, ezling_WS_REQ_BODY);
-			
 			//remove ReceiptRequest in sqlite
 			db.deleteReceiptRequest(receiptRequest);
+			return true;
 		} catch (Exception e) {
-			Log.d("receiptAgainError", e.toString());
+			Log.e("receiptAgainError", e.toString());
 			// save This Receipt Request when can not upload it to host
 			db.addReceiptRequest(receiptRequest);
+			return false;
 //			e.printStackTrace();
 		}
 	}

@@ -14,7 +14,6 @@ import com.wirecard.ezlink.handle.ConnectionDetector;
 import com.wirecard.ezlink.handle.IsoDepReaderTask;
 import com.wirecard.ezlink.handle.WebserviceConnection;
 import com.wirecard.ezlink.listView.ListviewAdapter;
-import com.wirecard.ezlink.model.ErrorCode;
 import com.wirecard.ezlink.webservices.tranxHistory.VDGTranxHistoryDetail;
 import com.wirecard.ezlink.webservices.tranxHistory.VDGTranxList;
 
@@ -134,8 +133,8 @@ public class TranxHistoryActivity extends Activity {
 		protected void onPostExecute(VDGTranxList tranxList) {
 			super.onPostExecute(tranxList);
 
-			if (tranxList == null) {
-				tranxHistoryError.setText(ErrorCode.getConnectionIssue());
+			if (null == tranxList) {
+				tranxHistoryError.setText(StringConstants.ErrorDecription.CONNECTION_ISSUE);
 			} else if (tranxList != null && tranxList.size() > 0) {
 				VDGTranxHistoryDetail historyDetail;
 				list = new ArrayList<HashMap<String, String>>();

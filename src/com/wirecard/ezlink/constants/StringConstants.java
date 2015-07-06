@@ -1,9 +1,5 @@
 package com.wirecard.ezlink.constants;
 
-/**
- * @author WCCTTI-JANAHAN
- */
-
 public interface StringConstants {
 	
 	public interface ErrorCode {
@@ -32,6 +28,7 @@ public interface StringConstants {
 		 String ERROR_CODE_31 = "31";
 		 String ERROR_CODE_32 = "32";
 		 String ERROR_CODE_33 = "33";
+		 String ERROR_CODE_34 = "34";
 	}
 
 	public interface ErrorDecription {
@@ -57,10 +54,13 @@ public interface StringConstants {
 		 String INVALID_COMMAND_FROM_HOST = "Invalid command from Host";
 		 String NO_RESPONSE_FROM_TERMINAL = "No Response from Terminal";
 		 String COMMUNICATION_ERROR_WITH_SAM_MANAGER = "Communication Error with SAM Manager";
-		 String TAG_IS_LOST = "Tag is lost.";
 		 String INVALID_COMMAND_FROM_CARD = "Invalid command from Card";
 		 String DEBIT_CARD_NOT_AVAILABLE = "Debit card not available";
 		 String TRANSCEIVE_FAILED = "Transceive failed";
+		 String CARD_BALANCE_IS_NOT_CORRECT = "Card balance is not correct";
+		 String CONNECTION_ISSUE = "Connection with Backend Failed";
+		 String TAG_LOST = "Connection with Card Failed";
+		 String CONNECTION_CLOSING_ISSUE = "Can not close connection";
 	}
 	public interface Validation {
 		public final String TRANX_CODE_PAY = "COT";
@@ -104,6 +104,14 @@ public interface StringConstants {
 		String THERE_IS = "There is ";
 		String RECEIPT_REQUEST_UPLOAD = " Receipt Request need to upload to host";
 		String PLEASE_WAIT = "Please wait...";
+		String CONFIRMATION = "Confirmation";
+		String TRANX_HISTORY_STR = "Transaction History";
+		String CONTACT = "Contact";
+		String TERMS_CONDITIONS = "Terms & Conditions";
+		String HELP = "Help";
+		String EXIT = "Are you sure you want to exit from the application..??";
+		String TAP_CARD = "Tap Card";
+		String PAYMENT = "Payment";
 	}
 
 	public interface WebserviceConnectionUrl {

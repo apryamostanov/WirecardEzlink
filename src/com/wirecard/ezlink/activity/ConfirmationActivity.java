@@ -1,13 +1,13 @@
 package com.wirecard.ezlink.activity;
 
 import com.example.R;
+import com.wirecard.ezlink.constants.StringConstants;
 import com.wirecard.ezlink.fragment.ConfirmationFragment;
 import com.wirecard.ezlink.fragment.ContactFragment;
 import com.wirecard.ezlink.fragment.HelpFragment;
 import com.wirecard.ezlink.fragment.PaymentFragment;
 import com.wirecard.ezlink.fragment.TagCardFragment;
 import com.wirecard.ezlink.fragment.TermsAndConditionsFragment;
-import com.wirecard.ezlink.fragment.TransactionHistoryFragment;
 import com.wirecard.ezlink.navigationdrawer.DrawerItemCustomAdapter;
 import com.wirecard.ezlink.navigationdrawer.ObjectDrawerItem;
 
@@ -19,6 +19,8 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.SharedPreferences;
+import android.content.SharedPreferences.Editor;
 import android.nfc.NfcAdapter;
 import android.nfc.NfcAdapter.ReaderCallback;
 import android.nfc.tech.IsoDep;
@@ -51,6 +53,8 @@ public class ConfirmationActivity extends FragmentActivity {
     private CharSequence mDrawerTitle;
     private CharSequence mTitle;
     private FragmentManager fragmentManager;
+    private SharedPreferences sharedPreferences;
+	private Editor editor;
     
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -58,6 +62,8 @@ public class ConfirmationActivity extends FragmentActivity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_confirmation);
 
+		sharedPreferences = getSharedPreferences("MyPref", Context.MODE_PRIVATE);
+		editor = sharedPreferences.edit();
 		fragmentManager = getSupportFragmentManager();
 		// for proper titles
 		mTitle = mDrawerTitle = getTitle();
@@ -70,11 +76,11 @@ public class ConfirmationActivity extends FragmentActivity {
         // list the drawer items
         ObjectDrawerItem[] drawerItem = new ObjectDrawerItem[5];
         
-        drawerItem[0] = new ObjectDrawerItem(R.drawable.ic_action_copy, "Confirmation");
-        drawerItem[1] = new ObjectDrawerItem(R.drawable.ic_action_share, "Transaction History");
-        drawerItem[2] = new ObjectDrawerItem(R.drawable.ic_action_share, "Contact");
-        drawerItem[3] = new ObjectDrawerItem(R.drawable.ic_action_share, "Terms & Conditions");
-        drawerItem[4] = new ObjectDrawerItem(R.drawable.ic_action_share, "Help");
+        drawerItem[0] = new ObjectDrawerItem(R.drawable.ic_action_copy, StringConstants.MessageRemarks.CONFIRMATION);
+        drawerItem[1] = new ObjectDrawerItem(R.drawable.ic_action_share, StringConstants.MessageRemarks.TRANX_HISTORY_STR);
+        drawerItem[2] = new ObjectDrawerItem(R.drawable.ic_action_share, StringConstants.MessageRemarks.CONTACT);
+        drawerItem[3] = new ObjectDrawerItem(R.drawable.ic_action_share, StringConstants.MessageRemarks.TERMS_CONDITIONS);
+        drawerItem[4] = new ObjectDrawerItem(R.drawable.ic_action_share, StringConstants.MessageRemarks.HELP);
         
         // Pass the folderData to our ListView adapter
         DrawerItemCustomAdapter adapter = new DrawerItemCustomAdapter(this, R.layout.listview_item_row, drawerItem);
@@ -217,26 +223,19 @@ public class ConfirmationActivity extends FragmentActivity {
 	@Override
 	public void onBackPressed() {
 		new AlertDialog.Builder(this)
-				.setTitle("Closing Application..!!")
+				.setTitle(StringConstants.MessageRemarks.CLOSING_APP)
 				.setMessage(
-						"Are you sure you want to exit from the application..??")
+						StringConstants.MessageRemarks.EXIT)
 				.setNegativeButton(android.R.string.no, null)
 				.setPositiveButton(android.R.string.yes,
 						new android.content.DialogInterface.OnClickListener() {
-							/*
-							 * public void onClick(DialogInterface arg0, int
-							 * arg1) { WelcomeActivity.super.onBackPressed(); }
-							 */
-
 							public void onClick(DialogInterface arg0, int arg) {
-								// ConfirmationActivity.super.onBackPressed();
+								editor.clear();
+								editor.commit();
 								getIntent().setFlags(
 										Intent.FLAG_ACTIVITY_NO_HISTORY);
 								finish();
-								// System.exit(0);
-
 							}
-
 						}).create().show();
 	}
 
