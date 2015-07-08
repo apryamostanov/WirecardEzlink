@@ -54,7 +54,7 @@ public class ReaderModeAccess {
 			//		String terminalRN = Util.getRandomHexString(16);
 			terminalRN = "CF549C2B7520389C";
 			Log.d("terminalRN", terminalRN);
-			purseRequest ="903203000A1403" + terminalRN;
+			purseRequest ="903203000A1403" + terminalRN + "00";
 			Log.d("Purse Request", purseRequest);
 			byte[] purseByte = Util.hexStringToByteArray(purseRequest.toString());
 			byte[] purseResponse = isoDep.transceive(purseByte);
@@ -84,7 +84,6 @@ public class ReaderModeAccess {
 			byte[] debitCommandByte = Util.hexStringToByteArray(debitCommand);
 			byte[] receiptResponse = isoDep.transceive(debitCommandByte);
 			receiptData = Util.hexString(receiptResponse);
-			Log.d("ReceiptData", receiptData);
 		} catch (IOException e) {
 		}
 		return receiptData;

@@ -13,8 +13,10 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.drawable.AnimationDrawable;
 import android.nfc.NfcAdapter;
 import android.os.AsyncTask;
@@ -38,13 +40,16 @@ public class WelcomeActivity extends Activity {
 	private Dialog dialog;
 	ImageView welcome;
 	AnimationDrawable myAnimationDrawable;
+	private SharedPreferences sharedpreferences;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_welcome);
 
-
+		sharedpreferences = getSharedPreferences("MyPref", Context.MODE_PRIVATE);
+		sharedpreferences.edit().clear().commit();
+		
 		welcome = (ImageView) findViewById(R.id.welcome);
 		myAnimationDrawable = (AnimationDrawable) welcome
 				.getDrawable();

@@ -96,12 +96,11 @@ public class IsoDepReaderTask extends AsyncTask<IsoDep, Void, String> {
 	}
 	
 	public IsoDepReaderTask(Context context, SharedPreferences sharedpreferences, 
-			QRCode qrCode, Dialog dialog, boolean getTranxHistory, String currentActivity ) {
+			Dialog dialog, boolean getTranxHistory, String currentActivity ) {
 		this._context = context;
 		this.activity = (Activity) context;
 		this.sharedpreferences = sharedpreferences;
 		this.card = new Card();
-		this.qrCode = qrCode;
 		this.dialog = dialog;
 		this.getTranxHistory = getTranxHistory;
 		this.currentActivity = currentActivity;
@@ -131,6 +130,7 @@ public class IsoDepReaderTask extends AsyncTask<IsoDep, Void, String> {
 		Log.e("IsoDepReaderTask", "Do in Background..");
 		String result = null;
 		detectCard = true;
+		qrCode = QRCode.getInstance();
 		IsoDep isoDep = params[0];
 		if (isoDep != null) {
 			try {
@@ -139,43 +139,16 @@ public class IsoDepReaderTask extends AsyncTask<IsoDep, Void, String> {
 				}
 				isoDep.setTimeout(5000);
 				
-				byte[] initByte = new byte[8];
-				initByte[1] = -92;
-				initByte[4] = 2;
-				initByte[5] = 64;
-	            byte[] initRespose = isoDep.transceive(initByte);
-	            Log.d("init()", "request: " + Util.hexString(initByte));
-		        Log.d("init()", "response: " + Util.hexString(initRespose));
-		        
-				byte[] getChallengeByte = { (byte) 0x00, (byte) 0x84,
-						(byte) 0x00, (byte) 0x00, (byte) 0x08 };
-				Log.d("Challenge Request",Util.hexString(getChallengeByte));
-				byte[] challengeResult = isoDep.transceive(getChallengeByte);
-				String cardRandomNo = Util.hexString(challengeResult).substring(0, 16);
-				Log.d("Challenge Response",Util.hexString(challengeResult));					
+				ReaderModeAccess modeAccess = new ReaderModeAccess(isoDep);
+				modeAccess.init();
+				modeAccess.getChallenge();
 				
-				//generate Terminal Random No
-//				String terminalRN = common.getRandomHexString(16);
 				String terminalRN = "CF549C2B7520389C";
-				Log.d("terminalRN", terminalRN);
 				StringBuffer purseString = new StringBuffer("903203000A1403");
 				purseString.append(terminalRN);
 				purseString.append("00");
-				Log.d("Purse Cmd", purseString.toString());
-				/*
-				byte[] b2 = new byte[6];
-				b2[0] = -112;
-				b2[1] = 50;
-				b2[2] = 3;
-				Log.d("PurseData Request", common.hexString(b2));
-                byte[] purseResult = isoDep.transceive(b2);
-                */
-				byte[] purseByte = Util.hexStringToByteArray(purseString.toString());
-				byte[] purseResult = isoDep.transceive(purseByte);
-				String purseData = Util.hexString(purseResult);
-				Log.d("PurseData Response", purseData);
+				String purseData = modeAccess.getPurseData(purseString.toString());
 				if(purseData.length() < 48) {
-//					errorCode.sendErrorToReceipt(qrCode, ErrorCode.getErrorCode24() + ":" + ErrorCode.getInvalidCommandFromCard());
 					result = StringConstants.ErrorDecription.INVALID_COMMAND_FROM_CARD;
 					return result;
 				}
@@ -273,6 +246,7 @@ public class IsoDepReaderTask extends AsyncTask<IsoDep, Void, String> {
 			        .setNegativeButton(android.R.string.no, null)
 			        .setPositiveButton(android.R.string.yes, new android.content.DialogInterface.OnClickListener() {
 						public void onClick(DialogInterface arg0, int arg) {
+							cancelCountDownTimer();
 							Intent in = new Intent(_context, QRCodeScannerActivity.class);
 							_context.startActivity(in);
 							((Activity) _context).finish();
@@ -281,9 +255,7 @@ public class IsoDepReaderTask extends AsyncTask<IsoDep, Void, String> {
 				}
 			}
 		} else {
-			if(null != countDownTimer) {
-				countDownTimer.cancel();
-			}
+			cancelCountDownTimer();
 		}
 		if (dialog != null && dialog.isShowing())
         {

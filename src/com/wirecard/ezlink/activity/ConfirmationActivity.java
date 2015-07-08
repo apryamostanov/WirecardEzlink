@@ -260,7 +260,7 @@ public class ConfirmationActivity extends FragmentActivity {
 			Tag tag = intent.getParcelableExtra(NfcAdapter.EXTRA_TAG);
 			final IsoDep isoDep = IsoDep.get(tag);
 			ProgressDialog dialog = ProgressDialog.show(ConfirmationActivity.this, "Please hold on to your card", "Scanning...", true);
-			new com.wirecard.ezlink.handle.IsoDepReaderTask(this, null, null, dialog, true, "ConfirmationActivity").execute(isoDep);
+			new com.wirecard.ezlink.handle.IsoDepReaderTask(this, null, dialog, true, "ConfirmationActivity").execute(isoDep);
 			}
 		}
 	}

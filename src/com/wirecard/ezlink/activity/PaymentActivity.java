@@ -315,7 +315,7 @@ public class PaymentActivity extends FragmentActivity {
 			TagCardFragment tagCardFragment = (TagCardFragment) fragmentManager.findFragmentByTag("fragment1");
 			if(tagCardFragment != null) {
 				dialog = ProgressDialog.show(PaymentActivity.this, StringConstants.MessageRemarks.HOLD_CARD, StringConstants.MessageRemarks.SCANNING, true);
-				new com.wirecard.ezlink.handle.IsoDepReaderTask(this, null, null, dialog, true, "PaymentActivity").execute(isoDep);
+				new com.wirecard.ezlink.handle.IsoDepReaderTask(this, null, dialog, true, "PaymentActivity").execute(isoDep);
 			} else {
 				payButton.setOnClickListener(new OnClickListener() {
 					@Override
@@ -352,34 +352,20 @@ public class PaymentActivity extends FragmentActivity {
 						Log.d("isConnected2", isoDep.isConnected()+"");
 					}
 					isoDep.setTimeout(5000);
-
-					byte[] initByte = new byte[8];
-					initByte[1] = -92;
-					initByte[4] = 2;
-					initByte[5] = 64;
-		            byte[] initRespose = isoDep.transceive(initByte);
-		            Log.d("init()", "request: " + Util.hexString(initByte));
-			        Log.d("init()", "response: " + Util.hexString(initRespose));
-			        
-					byte[] getChallengeByte = { (byte) 0x00, (byte) 0x84,
-							(byte) 0x00, (byte) 0x00, (byte) 0x08 };
-					byte[] challengeResult = isoDep.transceive(getChallengeByte);
-					Log.d("challengeResult2",Util.hexString(challengeResult));
-					String cardRN = Util.hexString(challengeResult).substring(0, 16);
-					
+					ReaderModeAccess modeAccess = new ReaderModeAccess(isoDep);
+					modeAccess.init();
+					byte[] challengeResponse = modeAccess.getChallenge();
+					String cardRN = modeAccess.getCardRN(challengeResponse);
 					String purseRequest = sharedPreferences.getString("purseRequest", null);
-					byte[] purseByte = Util.hexStringToByteArray(purseRequest.toString());
-					byte[] purseResult = isoDep.transceive(purseByte);
-					String purseData = Util.hexString(purseResult);
+					String purseData = modeAccess.getPurseData(purseRequest);
 					Log.d("purseData2", purseData);
 					if(purseData.length() < 48) {
-//						errorCode.sendErrorToReceipt(qrCode, ErrorCode.getErrorCode24() + ":" + ErrorCode.getInvalidCommandFromCard());
 						errorStr = StringConstants.ErrorDecription.INVALID_COMMAND_FROM_CARD;
 						return errorStr;
 					}
 					String cardNumber = card.getCardNo(purseData);
 					if(!cardNo.equals(cardNumber)) {
-						wsConnection.uploadReceiptData(qrCode, "", new RecieptReqError(StringConstants.ErrorCode.ERROR_CODE_15, StringConstants.ErrorDecription.INVALID_CARD));
+						wsConnection.uploadReceiptData("", new RecieptReqError(StringConstants.ErrorCode.ERROR_CODE_15, StringConstants.ErrorDecription.INVALID_CARD));
 						errorStr = getResources().getString(R.string.error_invalid_card);
 						return errorStr;
 					}
@@ -390,7 +376,7 @@ public class PaymentActivity extends FragmentActivity {
 						editor.putString("purseData", purseData);
 						editor.commit();
 						Log.d("debitCommand", "++CALL WS++"+System.currentTimeMillis());
-						debitCommand = wsConnection.getDebitCommand(qrCode);
+						debitCommand = wsConnection.getDebitCommand();
 						Log.d("debitCommand", "++RECIEVED WS++"+System.currentTimeMillis());
 						
 						//check if errorCode is null or not. If it is 12, so payment is timeout
@@ -405,38 +391,34 @@ public class PaymentActivity extends FragmentActivity {
 					if (debitCommand != null) {
 						if(!excuseDebit) {
 							noReceiptResponse = true;
-							debitCommand = "90340000" + debitCommand + "00";
+							//debitCommand = "90340000" + debitCommand + "00";
 							excuseDebit = true;
 						} else {
 //							isoDep.transceive(initByte);
 //							isoDep.transceive(getChallengeByte);
 						}
 						Log.d("debitCommand", debitCommand);
-//						SystemClock.sleep(1000);
-						byte[] debitCommandByte = Util.hexStringToByteArray(debitCommand);
-						byte[] receiptByte = isoDep.transceive(debitCommandByte);
+						String receiptData = modeAccess.getReceipt(debitCommand);
 						// the mobile get receipt data from card
 						noReceiptResponse = false;
 						
-						String receiptData = Util.hexString(receiptByte);
+						//String receiptData = Util.hexString(receiptByte);
 						Log.d("receiptData", receiptData);
 						
 //						check receiptData
 						if(!receiptData.contains("9000")) {
 							Log.d("Receipt Data error", "!9000");
 							//check purse balance is updated or not
-							isoDep.transceive(getChallengeByte);
-							byte[] purseResult2 = isoDep.transceive(purseByte);
-							String purseData2 = Util.hexString(purseResult2);
+							modeAccess.getChallenge();
+							String purseData2 = modeAccess.getPurseData(purseRequest);
 							if(purseData2.length() < 48) {
-//								errorCode.sendErrorToReceipt(qrCode, ErrorCode.getErrorCode24() + ":" + ErrorCode.getInvalidCommandFromCard());
 								errorStr = StringConstants.ErrorDecription.INVALID_COMMAND_FROM_CARD;
 								return errorStr;
 							}
 							Double curentBal2 = Double.parseDouble(card.getPurseBal(purseData2));
 							// debit command is successful 
 							if(curentBal2 < Double.parseDouble(purseBalance)) {
-								wsConnection.uploadReceiptData(qrCode, "", new RecieptReqError(StringConstants.ErrorCode.ERROR_CODE_01, StringConstants.ErrorDecription.DEBIT_COMMAND_SUCCESSFUL_BUT_NO_RESPONSE_FROM_CARD));
+								wsConnection.uploadReceiptData("", new RecieptReqError(StringConstants.ErrorCode.ERROR_CODE_01, StringConstants.ErrorDecription.DEBIT_COMMAND_SUCCESSFUL_BUT_NO_RESPONSE_FROM_CARD));
 								editor.putString("merchantName", merchantName);
 								editor.putString("paymentAmt", paymentAmt);
 								editor.putString("prevBal", purseBalance);
@@ -447,7 +429,6 @@ public class PaymentActivity extends FragmentActivity {
 								finish();
 								return null;
 							} else {
-								//wsConnection.uploadReceiptData(qrCode, "", new (ErrorCode.getErrorCode25(), ErrorCode.getApplicationError()));
 								errorStr = StringConstants.ErrorRemarks.TRANX_FAILURE;
 								return errorStr;
 							}
@@ -455,7 +436,7 @@ public class PaymentActivity extends FragmentActivity {
 						
 							Log.d("RECIEPT", "++CALL WS++"+System.currentTimeMillis());
 							// Upload receipt data
-							wsConnection.uploadReceiptData(qrCode, receiptData, new RecieptReqError(StringConstants.ErrorCode.ERROR_CODE_00, StringConstants.ErrorDecription.SUCCESSFUL));
+							wsConnection.uploadReceiptData(receiptData, new RecieptReqError(StringConstants.ErrorCode.ERROR_CODE_00, StringConstants.ErrorDecription.SUCCESSFUL));
 							Log.d("RECIEPT", "++RESULT WS++"+System.currentTimeMillis());
 							
 							new CurrentBalanceTask().execute(isoDep);
@@ -474,7 +455,6 @@ public class PaymentActivity extends FragmentActivity {
 						isoDep.close();
 					}catch (IOException e) {
 						errorStr=StringConstants.ErrorDecription.CONNECTION_CLOSING_ISSUE;
-//						errorCode.sendError(qrCode, e.getMessage());
 						Log.e("doInBackgroundErrorfINALLY", e.getMessage());
 					}
 					
@@ -515,22 +495,14 @@ public class PaymentActivity extends FragmentActivity {
 					isoDep.connect();
 				}
 				isoDep.setTimeout(5000);
+				ReaderModeAccess modeAccess = new ReaderModeAccess(isoDep);
 				if (tapCardAgain || noReceiptResponse) {
-					byte[] initByte = new byte[8];
-					initByte[1] = -92;
-					initByte[4] = 2;
-					initByte[5] = 64;
-					isoDep.transceive(initByte);
+					modeAccess.init();
 				}
 				tapCardAgain = true;
-				byte[] getChallengeByte = { (byte) 0x00, (byte) 0x84,
-						(byte) 0x00, (byte) 0x00, (byte) 0x08 };
-				isoDep.transceive(getChallengeByte);
-				
+				modeAccess.getChallenge();
 				String purseRequest = sharedPreferences.getString("purseRequest", null);
-				byte[] purseByte = Util.hexStringToByteArray(purseRequest.toString());
-				byte[] purseResult = isoDep.transceive(purseByte);
-				String purseData = Util.hexString(purseResult);
+				String purseData = modeAccess.getPurseData(purseRequest);
 				Log.d("purseData3", purseData);
 				if(purseData.length() < 10) {
 					errorStr = StringConstants.ErrorDecription.INVALID_COMMAND_FROM_CARD;
@@ -539,7 +511,7 @@ public class PaymentActivity extends FragmentActivity {
 				
 				String cardNumber = card.getCardNo(purseData);
 				if(!cardNo.equals(cardNumber)) {
-					wsConnection.uploadReceiptData(qrCode, "", new RecieptReqError(StringConstants.ErrorCode.ERROR_CODE_15, StringConstants.ErrorDecription.INVALID_CARD));
+					wsConnection.uploadReceiptData("", new RecieptReqError(StringConstants.ErrorCode.ERROR_CODE_15, StringConstants.ErrorDecription.INVALID_CARD));
 					errorStr = StringConstants.ErrorDecription.INVALID_CARD;
 					return errorStr;
 				}
@@ -550,7 +522,7 @@ public class PaymentActivity extends FragmentActivity {
 				// check the card balance is correct after payment is successful by comparing with  old and new balances.
 				boolean diffirentBalance = card.checkCurrentBalance(currentBalance, purseBalance, paymentAmt);
 				if(!diffirentBalance) {
-					wsConnection.uploadReceiptData(qrCode, "", new RecieptReqError(StringConstants.ErrorCode.ERROR_CODE_34, StringConstants.ErrorDecription.CARD_BALANCE_IS_NOT_CORRECT));
+					wsConnection.uploadReceiptData("", new RecieptReqError(StringConstants.ErrorCode.ERROR_CODE_34, StringConstants.ErrorDecription.CARD_BALANCE_IS_NOT_CORRECT));
 					errorStr = StringConstants.ErrorDecription.CARD_BALANCE_IS_NOT_CORRECT;
 					return errorStr;
 				}

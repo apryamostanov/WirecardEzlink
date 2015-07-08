@@ -278,108 +278,14 @@ public class NFCActivity extends FragmentActivity {
 			TagCardFragment tagCardFragment = (TagCardFragment) fragmentManager.findFragmentByTag("fragment1");
 			if(tagCardFragment != null) {
 				Log.d("tagCardFragment is ", "not null");
-				isoDepReaderTask = new IsoDepReaderTask(this, sharedpreferences, qrCode, dialog, true, "NFCActivity");
+				isoDepReaderTask = new IsoDepReaderTask(this, sharedpreferences, dialog, true, "NFCActivity");
 			} else {
-				isoDepReaderTask = new IsoDepReaderTask(this, sharedpreferences, qrCode, dialog, false, "NFCActivity");
+				isoDepReaderTask = new IsoDepReaderTask(this, sharedpreferences, dialog, false, "NFCActivity");
 			}
 			isoDepReaderTask.execute(isoDep);
 //			new IsoDepReaderTask2().execute(isoDep);
 		}
 	}
-	
-	/*class IsoDepReaderTask2 extends AsyncTask<IsoDep, Void, String> {
-
-		@Override
-		protected String doInBackground(IsoDep... params) {
-			Log.e("IsoDepReaderTask", "Do in Background..");
-			String result = null;
-			detectCard = true;
-			IsoDep isoDep = params[0];
-			Editor editor = sharedpreferences.edit();
-			if (isoDep != null) {
-				try {
-					if (!isoDep.isConnected()) {
-						isoDep.connect();
-					}
-					isoDep.setTimeout(5000);
-					readerModeAccess = new ReaderModeAccess(isoDep);
-					
-					readerModeAccess.init();
-					readerModeAccess.getChallenge();
-					String purseData = readerModeAccess.getPurseData();
-					if(purseData.length() < 48) {
-//						errorCode.sendErrorToReceipt(qrCode, ErrorCode.getErrorCode24() + ":" + ErrorCode.getInvalidCommandFromCard());
-						result = ErrorCode.getInvalidCommandFromCard();
-						return result;
-					}
-					String cardNo = card.getCardNo(purseData);
-					String purseExpiryDate = card.getPurseExpiryDate(purseData);
-					String purseStatus = card.getPusrseStatus(purseData);
-					String balance = card.getPurseBal(purseData);
-
-					Log.d("card no", cardNo);
-					Log.d("balance", balance);
-					Log.d("expiry date", purseExpiryDate);
-					Log.d("purseStatus", purseStatus);
-
-					//Check expiry date
-					boolean cardExpiry = card.checkExpiryDate(purseExpiryDate);
-					if(cardExpiry) {
-						result = "Card is expired";
-						return result;
-					}
-					//Check card bin
-					boolean checkCardBin = card.checkCardBin(cardNo);
-					Log.d("CARDBIN",String.valueOf(checkCardBin));
-					if(!checkCardBin) {
-						result = "This is not an ez-link card as it is not issued by EZ-Link Pte Ltd.";
-//						errorCode.sendErrorToReceipt(qrCode, ErrorCode.getErrorCode15() + ":" + ErrorCode.getInvalidCard());
-						return result;
-					}
-					
-					//save data into session
-					editor.putString("cardNo", cardNo);
-					editor.putString("terminalRN", readerModeAccess.getTerminalRN());
-					editor.putString("balance", String.valueOf(balance));
-					editor.putString("purseRequest", readerModeAccess.getPurseRequest());
-					editor.commit();
-					
-					Bundle b = new Bundle();
-					b.putSerializable("qrCode", qrCode);
-					
-					//Intent in = new Intent(_context, PaymentActivity.class);
-					Intent in = new Intent(NFCActivity.this, PaymentActivity.class);
-					in.putExtras(b);
-					Log.d("PAY","GONNA START PAYMENT ACTIVITY");
-					startActivity(in);
-					Log.d("PAY","AFTER START PAYMENT ACTIVITY");
-					finish();
-					Log.d("PAY","AFTER FINISH");
-				} catch (Exception e) {
-					result = e.getMessage();
-					// errorCode.sendError(qrCode, result);
-					Log.e("doInBackgroundError CATCH", "" + e.toString());
-				} finally {
-					isoDepStatic = isoDep;
-				}
-			}
-			return result;
-		}
-		
-		@Override
-		protected void onPostExecute(String response) {
-			if(null != response) {
-				detectCard = false;
-				error.setVisibility(View.VISIBLE);
-				error_content.setText(response);
-			}
-			if (dialog != null && dialog.isShowing())
-	        {
-				dialog.dismiss();
-				dialog = null;
-	        }
-		}
-	}*/
 	
 	@Override
 	public void onBackPressed(){

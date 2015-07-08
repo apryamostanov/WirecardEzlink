@@ -133,11 +133,17 @@ public class SecondActivity extends FragmentActivity implements ActionBar.TabLis
 		filters = new IntentFilter[] { new IntentFilter(NfcAdapter.ACTION_TECH_DISCOVERED) };
 		techList = new String[][] {new String[] { IsoDep.class.getName() } };
 		
+		
+		// check there are any Receipt requests have send to host yet.
+		DBHelper db = new DBHelper(this);
+		List<ReceiptRequest> list = db.getAllReceiptRequest();
+		uploadToHost = list.isEmpty() ? false : true;
+	
 		Bundle args = getIntent().getExtras();
 		
 		firstTime = null!=args?args.getBoolean("firstTime"):true;
 		Log.e("-------First time---------: " , firstTime+"");
-        if (firstTime && Util.getStartScanPref(getApplicationContext()))
+        if (uploadToHost == false && firstTime == true && Util.getStartScanPref(getApplicationContext()) == true)
         {
         	Intent intent = new Intent(this, QRCodeScannerActivity.class);
         	startActivity(intent);
@@ -225,7 +231,7 @@ public class SecondActivity extends FragmentActivity implements ActionBar.TabLis
 					StringConstants.MessageRemarks.SCANNING, true);
 			Tag tag = intent.getParcelableExtra(NfcAdapter.EXTRA_TAG);
 			IsoDep isoDep = IsoDep.get(tag);
-			new IsoDepReaderTask(this, null, null, dialog, true, "SecondActivity").execute(isoDep);
+			new IsoDepReaderTask(this, null, dialog, true, "SecondActivity").execute(isoDep);
 		}
 	}
 	

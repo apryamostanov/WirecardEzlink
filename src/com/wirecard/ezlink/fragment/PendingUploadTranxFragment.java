@@ -56,21 +56,21 @@ public class PendingUploadTranxFragment extends Fragment {
 	private class ReceiptAsyncTask extends AsyncTask<List<ReceiptRequest>, Integer, Boolean> {
 		@Override
 		protected Boolean doInBackground(List<ReceiptRequest>... params) {
-			boolean uploadSuccess = false;
 			
 			for (int i = 0; i < params[0].size(); i++) {
 				try {
-//					SystemClock.sleep(1000);
 					ReceiptRequest receipt = params[0].get(i);
 					publishProgress(params[0].size() - i);
-					uploadSuccess = wsConnection.uploadReceiptDataAgain(receipt);
+					if(wsConnection.uploadReceiptDataAgain(receipt) == false) {
+						return false;
+					}
 				} catch (Exception e) {
 					Log.e("Pending Upload Tranx Error: ", e.toString());
 					return false;
 				}
 			}
 
-			return uploadSuccess;
+			return true;
 		}
 
 		@Override

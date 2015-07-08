@@ -15,6 +15,7 @@ import android.util.Log;
 import android.widget.Toast;
 
 import com.example.R.string;
+import com.wirecard.ezlink.constants.StringConstants;
 import com.wirecard.ezlink.model.QRCode;
 import com.wirecard.ezlink.model.ReceiptRequest;
 import com.wirecard.ezlink.sqlite.DBHelper;
@@ -51,6 +52,7 @@ public class WebserviceConnection {
 
 	public VDGTranxList getTranxHistory(String cardNo) {
 		VDGTranxList tranxList = null;
+		String exception = null;
 		try {
 			VDGTranxHistorySoap historySoap = new VDGTranxHistorySoap();
 			VDGEZLING_WS_TRANX_REQ_HEADER reqHeader = new VDGEZLING_WS_TRANX_REQ_HEADER("", "", "", "", "", "", "", "");
@@ -71,16 +73,22 @@ public class WebserviceConnection {
 				tranxList = new VDGTranxList();
 			}
 		}catch (Exception e) {
-			Log.e("getTranxHistoryError", e.toString());
+			exception = e.toString();
+			Log.e("getTranxHistoryError", exception);
 			e.printStackTrace();
-//			uploadReceiptData(qrCode, ErrorCode.getErrorCode26() + ":" + ErrorCode.getDebitCommandError());
+		} finally {
+			if(null!=exception && (exception.contains("EOFException") || exception.contains("EPIPE"))) {
+				return getTranxHistory(cardNo);
+			}
 		}
 		return tranxList;
 	}
 	
-	public String getDebitCommand(QRCode qrCode) {
+	public String getDebitCommand() {
 		String debitCommand = null;
+		String exception = null;
 		try {
+			QRCode qrCode = QRCode.getInstance();
 			SharedPreferences sharedPreferences = _context.getSharedPreferences("MyPref", Context.MODE_PRIVATE);
 			Editor editor = sharedPreferences.edit();
 			String merchantNo = qrCode.getQR_MER_ID();
@@ -122,17 +130,24 @@ public class WebserviceConnection {
 			
 			//check transaction info with web service header info
 //			boolean match = Common.checkTranxInfo(qrCode, res_BODY., merchantRefNo, orderNo)
-		}catch (Exception e) {
-			Log.e("getDebitCommandError", e.toString());
-			e.printStackTrace();
-//			uploadReceiptData(qrCode, ErrorCode.getErrorCode26() + ":" + ErrorCode.getDebitCommandError());
+		} catch (Exception e) {
+			exception = e.toString();
+			Log.e("getDebitCommandError", exception);
+			uploadReceiptData("", new RecieptReqError(StringConstants.ErrorCode.ERROR_CODE_26, StringConstants.ErrorDecription.DEBIT_COMMAND_ERROR));
+//			e.printStackTrace();
+		} finally {
+			if(null!=exception && (exception.contains("EOFException") || exception.contains("EPIPE"))) {
+				return getDebitCommand();
+			}
 		}
+		
 		return debitCommand;		
 	}
 	
-	public String uploadReceiptData(QRCode qrCode, String receiptData, RecieptReqError reqError) {
-		
+	public String uploadReceiptData(String receiptData, RecieptReqError reqError) {
+		String exception = null;
 		String uploadResult = null;
+		QRCode qrCode = QRCode.getInstance();
 		SharedPreferences sharedPreferences = _context.getSharedPreferences("MyPref", Context.MODE_PRIVATE);
 		String merchantNo = qrCode.getQR_MER_ID();
 		String orderNo = qrCode.getQR_ORDER_NO();
@@ -159,16 +174,22 @@ public class WebserviceConnection {
 			String statusCode = res.STATUSCODE;
 			uploadResult = (String) res.getProperty(4);
 		} catch (Exception e) {
-			Log.e("uploadReceiptDataError", e.toString());
+			exception = e.toString();
+			Log.e("uploadReceiptDataError", exception);
 			//save receipt data into sqlite if sending receipt to host fail
 			db.addReceiptRequest(new ReceiptRequest(merchantNo, orderNo, merchantRefNo, cardNo, amount, receiptData, (String)reqError.getProperty(0), (String)reqError.getProperty(1)));
 //			e.printStackTrace();
-		} 
+		} finally {
+			if(null!=exception && (exception.contains("EOFException") || exception.contains("EPIPE"))) {
+				return uploadReceiptData(receiptData, reqError);
+			}
+		}
 		
 		return uploadResult;
 	}
 	
 	public boolean uploadReceiptDataAgain(ReceiptRequest receiptRequest) {
+		String exception = null;
 		Date dateNow = new Date();
 		SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy HHmmss");
 		String date = dateFormat.format(dateNow);
@@ -193,11 +214,16 @@ public class WebserviceConnection {
 			db.deleteReceiptRequest(receiptRequest);
 			return true;
 		} catch (Exception e) {
-			Log.e("receiptAgainError", e.toString());
+			exception = e.toString();
+			Log.e("receiptAgainError", exception);
 			// save This Receipt Request when can not upload it to host
 			db.addReceiptRequest(receiptRequest);
-			return false;
 //			e.printStackTrace();
+		} finally {
+			if(null!=exception && (exception.contains("EOFException") || exception.contains("EPIPE"))) {
+				return uploadReceiptDataAgain(receiptRequest);
+			}
 		}
+		return false;
 	}
 }

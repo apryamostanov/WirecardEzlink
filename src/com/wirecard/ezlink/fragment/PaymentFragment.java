@@ -83,7 +83,7 @@ public class PaymentFragment extends Fragment {
 			error_textView.setVisibility(View.VISIBLE);
 			error_content.setText(StringConstants.ErrorDecription.INSUFFICIENT_BALANCE);
 			payButton.setVisibility(View.INVISIBLE);
-			wsConnection.uploadReceiptData(qrCode, "", new RecieptReqError(StringConstants.ErrorCode.ERROR_CODE_20, StringConstants.ErrorDecription.INSUFFICIENT_BALANCE));
+			wsConnection.uploadReceiptData("", new RecieptReqError(StringConstants.ErrorCode.ERROR_CODE_20, StringConstants.ErrorDecription.INSUFFICIENT_BALANCE));
 		}
 		
 		payButton.setOnClickListener(new OnClickListener() {

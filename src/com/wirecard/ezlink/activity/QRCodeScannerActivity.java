@@ -127,9 +127,9 @@ public class QRCodeScannerActivity extends Activity {
 	public void onActivityResult(int requestCode, int resultCode, Intent intent) {
 		if (requestCode == 0) {
 			if (resultCode == RESULT_OK) {
-				if(Util.getVibratePref(this)) {
-					((Vibrator)getSystemService(Context.VIBRATOR_SERVICE)).vibrate(100L);
-				}
+//				if(Util.getVibratePref(this)) {
+//					((Vibrator)getSystemService(Context.VIBRATOR_SERVICE)).vibrate(100L);
+//				}
 //				if(Util.getSoundPref(this)) {
 //					playBeep();
 //				}
