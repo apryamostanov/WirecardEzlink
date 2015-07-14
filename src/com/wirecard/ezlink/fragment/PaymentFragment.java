@@ -43,6 +43,7 @@ public class PaymentFragment extends Fragment {
 	private String cardNo;
 	private WebserviceConnection wsConnection;
 	public static ProgressDialog dialog;
+	private String autoloadStatus;
 
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -72,18 +73,17 @@ public class PaymentFragment extends Fragment {
 		
 		cardNo = sharedPreferences.getString("cardNo", null);
 		purseBalance = sharedPreferences.getString("balance", null);
-		
+		autoloadStatus = sharedPreferences.getString("autoloadStatus", null);
 		cardNo_textView.setText(cardNo);
 		purseBalance_textView.setText("$"+purseBalance);
 		paymentAmt_textView.setText("$"+paymentAmt);
 		merchantName_textView.setText(merchantName);
 		merchantRef_textView.setText(merchantRef);
 		
-		if(Double.parseDouble(purseBalance) < Double.parseDouble(paymentAmt)) {
+		if(!autoloadStatus.equals("Enabled") && (Double.parseDouble(purseBalance) < Double.parseDouble(paymentAmt))) {
 			error_textView.setVisibility(View.VISIBLE);
 			error_content.setText(StringConstants.ErrorDecription.INSUFFICIENT_BALANCE);
 			payButton.setVisibility(View.INVISIBLE);
-			wsConnection.uploadReceiptData("", new RecieptReqError(StringConstants.ErrorCode.ERROR_CODE_20, StringConstants.ErrorDecription.INSUFFICIENT_BALANCE));
 		}
 		
 		payButton.setOnClickListener(new OnClickListener() {

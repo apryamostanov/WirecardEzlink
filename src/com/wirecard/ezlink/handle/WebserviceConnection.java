@@ -75,7 +75,7 @@ public class WebserviceConnection {
 		}catch (Exception e) {
 			exception = e.toString();
 			Log.e("getTranxHistoryError", exception);
-			e.printStackTrace();
+//			e.printStackTrace();
 		} finally {
 			if(null!=exception && (exception.contains("EOFException") || exception.contains("EPIPE"))) {
 				return getTranxHistory(cardNo);
@@ -133,7 +133,6 @@ public class WebserviceConnection {
 		} catch (Exception e) {
 			exception = e.toString();
 			Log.e("getDebitCommandError", exception);
-			uploadReceiptData("", new RecieptReqError(StringConstants.ErrorCode.ERROR_CODE_26, StringConstants.ErrorDecription.DEBIT_COMMAND_ERROR));
 //			e.printStackTrace();
 		} finally {
 			if(null!=exception && (exception.contains("EOFException") || exception.contains("EPIPE"))) {

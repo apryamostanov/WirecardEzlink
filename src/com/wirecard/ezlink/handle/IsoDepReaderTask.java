@@ -37,14 +37,13 @@ import com.wirecard.ezlink.activity.TranxHistoryActivity;
 import com.wirecard.ezlink.constants.StringConstants;
 import com.wirecard.ezlink.fragment.NFCFragment;
 import com.wirecard.ezlink.fragment.TagCardFragment;
-import com.wirecard.ezlink.model.Card;
 import com.wirecard.ezlink.model.QRCode;
 
 public class IsoDepReaderTask extends AsyncTask<IsoDep, Void, String> {
 	private Context _context;
     private Activity activity;
     private SharedPreferences sharedpreferences;
-    private Card card;
+    private CardInfoHandler card;
     private QRCode qrCode;
 	Dialog dialog;
 	boolean detectCard = false;
@@ -100,7 +99,7 @@ public class IsoDepReaderTask extends AsyncTask<IsoDep, Void, String> {
 		this._context = context;
 		this.activity = (Activity) context;
 		this.sharedpreferences = sharedpreferences;
-		this.card = new Card();
+		this.card = new CardInfoHandler();
 		this.dialog = dialog;
 		this.getTranxHistory = getTranxHistory;
 		this.currentActivity = currentActivity;
@@ -157,11 +156,14 @@ public class IsoDepReaderTask extends AsyncTask<IsoDep, Void, String> {
 				String purseCreationDate = card.getPurseCreationDate(purseData);
 				String purseExpiryDate = card.getPurseExpiryDate(purseData);
 				String purseStatus = card.getPusrseStatus(purseData);
+				String autoloadStatus = card.getALStatus(purseData);
+				String auloloadAmount = card.getALAmount(purseData);
 				Log.d("card no", cardNo);
 				Log.d("balance", balance);
 				Log.d("expiry date", purseExpiryDate);
 				Log.d("purseStatus", purseStatus);
-				
+				Log.d("autoloadStatus", autoloadStatus);
+				Log.d("auloloadAmount", auloloadAmount);
 				//Check card bin
 				boolean checkCardBin = card.checkCardBin(cardNo);
 				Log.d("CARDBIN",String.valueOf(checkCardBin));
@@ -203,6 +205,7 @@ public class IsoDepReaderTask extends AsyncTask<IsoDep, Void, String> {
 					editor.putString("cardNo", cardNo);
 					editor.putString("terminalRN", terminalRN);
 					editor.putString("balance", balance);
+					editor.putString("autoloadStatus", autoloadStatus);
 					editor.putString("purseRequest", purseString.toString());
 //					editor.putString("purseRequest", common.hexString(b2));
 					editor.commit();

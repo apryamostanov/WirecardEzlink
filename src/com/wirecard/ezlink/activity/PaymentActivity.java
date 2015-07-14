@@ -18,12 +18,12 @@ import com.wirecard.ezlink.fragment.HelpFragment;
 import com.wirecard.ezlink.fragment.PaymentFragment;
 import com.wirecard.ezlink.fragment.TagCardFragment;
 import com.wirecard.ezlink.fragment.TermsAndConditionsFragment;
+import com.wirecard.ezlink.handle.CardInfoHandler;
 import com.wirecard.ezlink.handle.Util;
 import com.wirecard.ezlink.handle.ConnectionDetector;
 import com.wirecard.ezlink.handle.IsoDepReaderTask;
 import com.wirecard.ezlink.handle.ReaderModeAccess;
 import com.wirecard.ezlink.handle.WebserviceConnection;
-import com.wirecard.ezlink.model.Card;
 import com.wirecard.ezlink.model.QRCode;
 import com.wirecard.ezlink.navigationdrawer.DrawerItemCustomAdapter;
 import com.wirecard.ezlink.navigationdrawer.ObjectDrawerItem;
@@ -77,7 +77,7 @@ public class PaymentActivity extends FragmentActivity {
 	private WebserviceConnection wsConnection;
 	private QRCode qrCode;
 	private ConnectionDetector cd;
-	private Card card;
+	private CardInfoHandler card;
 	private String cardNo;
 	private boolean detectCard;
 	private String debitCommand;
@@ -174,7 +174,7 @@ public class PaymentActivity extends FragmentActivity {
 
 		sharedPreferences = getSharedPreferences("MyPref", Context.MODE_PRIVATE);
 		editor = sharedPreferences.edit();
-		card = new Card();
+		card = new CardInfoHandler();
 		cd = new ConnectionDetector(this);
 		mNfcAdapter = NfcAdapter.getDefaultAdapter(this);
 		wsConnection = new WebserviceConnection(this);
@@ -416,6 +416,8 @@ public class PaymentActivity extends FragmentActivity {
 								return errorStr;
 							}
 							Double curentBal2 = Double.parseDouble(card.getPurseBal(purseData2));
+							Log.d("curentBal2", curentBal2.toString());
+							Log.d("purseBalance", purseBalance);
 							// debit command is successful 
 							if(curentBal2 < Double.parseDouble(purseBalance)) {
 								wsConnection.uploadReceiptData("", new RecieptReqError(StringConstants.ErrorCode.ERROR_CODE_01, StringConstants.ErrorDecription.DEBIT_COMMAND_SUCCESSFUL_BUT_NO_RESPONSE_FROM_CARD));

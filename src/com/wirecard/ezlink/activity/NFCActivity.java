@@ -9,12 +9,12 @@ import com.wirecard.ezlink.fragment.HelpFragment;
 import com.wirecard.ezlink.fragment.NFCFragment;
 import com.wirecard.ezlink.fragment.TagCardFragment;
 import com.wirecard.ezlink.fragment.TermsAndConditionsFragment;
+import com.wirecard.ezlink.handle.CardInfoHandler;
 import com.wirecard.ezlink.handle.Util;
 import com.wirecard.ezlink.handle.ConnectionDetector;
 import com.wirecard.ezlink.handle.IsoDepReaderTask;
 import com.wirecard.ezlink.handle.ReaderModeAccess;
 import com.wirecard.ezlink.handle.WebserviceConnection;
-import com.wirecard.ezlink.model.Card;
 import com.wirecard.ezlink.model.QRCode;
 import com.wirecard.ezlink.navigationdrawer.DrawerItemCustomAdapter;
 import com.wirecard.ezlink.navigationdrawer.ObjectDrawerItem;
@@ -65,7 +65,7 @@ public class NFCActivity extends FragmentActivity {
 	private String[][] techList;
 	public static IsoDep isoDepStatic;
 	private ReaderModeAccess readerModeAccess;
-	private Card card;
+	private CardInfoHandler card;
 	private Util common;
 	public static boolean showToastMgs;
 	private String[] mNavigationDrawerItemTitles;
@@ -144,7 +144,7 @@ public class NFCActivity extends FragmentActivity {
 		sharedpreferences = getSharedPreferences("MyPref", Context.MODE_PRIVATE);
 		error = (TextView) findViewById(R.id.error);
 		error_content = (TextView) findViewById(R.id.error_content);
-		card = new Card();
+		card = new CardInfoHandler();
 		common = new Util();
 		mNfcAdapter = NfcAdapter.getDefaultAdapter(this);
 		pendingIntent = PendingIntent.getActivity(

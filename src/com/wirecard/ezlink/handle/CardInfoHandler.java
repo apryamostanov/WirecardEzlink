@@ -1,7 +1,8 @@
-package com.wirecard.ezlink.model;
+package com.wirecard.ezlink.handle;
 
 import java.math.BigDecimal;
 import java.math.MathContext;
+import java.text.DecimalFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -9,7 +10,7 @@ import java.util.Locale;
 
 import android.util.Log;
 
-public class Card {
+public class CardInfoHandler {
 	
 	public String getPurseBal(String result) {
 		String purseBal = result.substring(4, 10);
@@ -82,7 +83,7 @@ public class Card {
     }
 
 	public boolean checkCurrentBalance(String currentBalance,
-			String purseBalance, String paymentAmt) {
+		String purseBalance, String paymentAmt) {
 		boolean check = false;
 		BigDecimal currentB = BigDecimal.valueOf(Double.parseDouble(currentBalance));
 		BigDecimal oldB = BigDecimal.valueOf(Double.parseDouble(purseBalance));
@@ -95,4 +96,87 @@ public class Card {
 		}
 		return check;
 	}
+	
+	public String getALStatus(String result)
+    {
+        byte byte0 = Byte.parseByte(result.substring(2, 4), 16);
+        if ((byte)(byte0 & 1) == 0)
+        {
+            return "N.A.";
+        }
+        if ((byte)(byte0 & 2) == 0)
+        {
+            return "Not Enabled";
+        } else
+        {
+            return "Enabled";
+        }
+    }
+	
+	public String getALAmount(String result)
+    {
+        byte byte0 = Byte.parseByte(result.substring(2, 4), 16);
+        if ((byte)(byte0 & 1) == 0)
+        {
+            return "N.A.";
+        }
+        if ((byte)(byte0 & 2) == 0)
+        {
+            return "N.A.";
+        } else
+        {
+            return getAmount(result.substring(10, 16), "");
+        }
+    }
+	
+	public String getAmount(String s, String s1)
+    {
+        if (s1.startsWith("F0"))
+        {
+            return "N.A.";
+        }
+        if (s1.startsWith("11"))
+        {
+            return "N.A.";
+        }
+        if (s1.startsWith("83"))
+        {
+            return "N.A.";
+        }
+        if (s.startsWith("0"))
+        {
+        	for(int i=0;i<s.length();i++) {
+        		if(!s.substring(i).startsWith("0")) {
+        			int j = Integer.parseInt(s.substring(i), 16);
+                    String s3 = dotAppending((new DecimalFormat("###,###,###.##")).format(0.01D * (double)j));
+                    return (new StringBuilder(" $")).append(s3).toString();
+        		}
+        	}
+        	return "balance null";
+        } else
+        {
+            long l = Long.parseLong("FFFFFF", 16);
+            long l1 = Long.parseLong(s, 16);
+            s = dotAppending((new DecimalFormat("###,###,###.##")).format((double)((l - l1) + 1L) * 0.01D));
+            return (new StringBuilder("-$")).append(s).toString();
+        }
+    }
+	
+	private String dotAppending(String s)
+    {
+        int i = s.indexOf(".");
+        String s1;
+        if (i < 0)
+        {
+            s1 = (new StringBuilder(String.valueOf(s))).append(".00").toString();
+        } else
+        {
+            s1 = s;
+            if (i == s.length() - 2)
+            {
+                return (new StringBuilder(String.valueOf(s))).append("0").toString();
+            }
+        }
+        return s1;
+    }
 }
