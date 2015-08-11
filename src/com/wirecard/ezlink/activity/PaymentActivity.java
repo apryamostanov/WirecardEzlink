@@ -522,7 +522,15 @@ public class PaymentActivity extends FragmentActivity {
 				Log.d("preBal", purseBalance);
 				Log.d("curentBal", currentBalance + "");
 				// check the card balance is correct after payment is successful by comparing with  old and new balances.
-				boolean diffirentBalance = card.checkCurrentBalance(currentBalance, purseBalance, paymentAmt);
+				boolean diffirentBalance = false;
+				boolean needAutoload = sharedPreferences.getBoolean("needAutoload", false);
+				if(needAutoload) {
+					String autoLoadAmt = sharedPreferences.getString("auloloadAmount", "0");
+					diffirentBalance = card.checkCurrentBalanceWithAutoLoadAmt(currentBalance, purseBalance, paymentAmt, autoLoadAmt);
+				} else {
+					diffirentBalance = card.checkCurrentBalance(currentBalance, purseBalance, paymentAmt);
+				}
+				
 				if(!diffirentBalance) {
 					wsConnection.uploadReceiptData("", new RecieptReqError(StringConstants.ErrorCode.ERROR_CODE_34, StringConstants.ErrorDecription.CARD_BALANCE_IS_NOT_CORRECT));
 					errorStr = StringConstants.ErrorDecription.CARD_BALANCE_IS_NOT_CORRECT;

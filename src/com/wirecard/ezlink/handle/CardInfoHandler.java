@@ -83,16 +83,16 @@ public class CardInfoHandler {
     }
 
 	public boolean checkCurrentBalance(String currentBalance,
-		String purseBalance, String paymentAmt) {
+		String previousBalance, String paymentAmt) {
 		boolean check = false;
 		BigDecimal currentB = BigDecimal.valueOf(Double.parseDouble(currentBalance));
-		BigDecimal oldB = BigDecimal.valueOf(Double.parseDouble(purseBalance));
+		BigDecimal oldB = BigDecimal.valueOf(Double.parseDouble(previousBalance));
 		BigDecimal paymentA = BigDecimal.valueOf(Double.parseDouble(paymentAmt));
-		BigDecimal checkB = oldB.subtract(paymentA);
-		if(currentB.compareTo(checkB) == 0) {
+		BigDecimal subBalance = oldB.subtract(paymentA);
+		if(currentB.compareTo(subBalance) == 0) {
 			check = true;
 		} else {
-			Log.d("Subtract two value be wrong: ", checkB.toString());
+			Log.d("Subtract two value be wrong: ", subBalance.toString());
 		}
 		return check;
 	}
@@ -149,7 +149,7 @@ public class CardInfoHandler {
         		if(!s.substring(i).startsWith("0")) {
         			int j = Integer.parseInt(s.substring(i), 16);
                     String s3 = dotAppending((new DecimalFormat("###,###,###.##")).format(0.01D * (double)j));
-                    return (new StringBuilder(" $")).append(s3).toString();
+                    return s3;
         		}
         	}
         	return "balance null";
@@ -158,7 +158,7 @@ public class CardInfoHandler {
             long l = Long.parseLong("FFFFFF", 16);
             long l1 = Long.parseLong(s, 16);
             s = dotAppending((new DecimalFormat("###,###,###.##")).format((double)((l - l1) + 1L) * 0.01D));
-            return (new StringBuilder("-$")).append(s).toString();
+            return (new StringBuilder("-")).append(s).toString();
         }
     }
 	
@@ -179,4 +179,20 @@ public class CardInfoHandler {
         }
         return s1;
     }
+
+	public boolean checkCurrentBalanceWithAutoLoadAmt(String currentBalance,
+			String previousBalance, String paymentAmt, String autoLoadAmt) {
+		boolean check = false;
+		BigDecimal currentB = BigDecimal.valueOf(Double.parseDouble(currentBalance));
+		BigDecimal oldB = BigDecimal.valueOf(Double.parseDouble(previousBalance));
+		BigDecimal paymentA = BigDecimal.valueOf(Double.parseDouble(paymentAmt));
+		BigDecimal autoloadA = BigDecimal.valueOf(Double.parseDouble(autoLoadAmt));
+		BigDecimal subBalance = (oldB.add(autoloadA)).subtract(paymentA);
+		if(currentB.compareTo(subBalance) == 0) {
+			check = true;
+		} else {
+			Log.d("Subtract two value be wrong: ", subBalance.toString());
+		}
+		return check;
+	}
 }

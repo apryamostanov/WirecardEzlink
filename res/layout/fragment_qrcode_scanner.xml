@@ -2,13 +2,13 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#76d0e2">
+    android:background="#627f99">
 
     <TextView 
         android:id="@+id/ads"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="This is ad"
+        android:layout_height="25dp"
+        
         />
     <ListView
         android:id="@+id/listview"

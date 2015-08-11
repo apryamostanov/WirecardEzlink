@@ -61,6 +61,7 @@ public interface StringConstants {
 		 String CONNECTION_ISSUE = "Connection with Backend Failed";
 		 String TAG_LOST = "Connection with Card Failed";
 		 String CONNECTION_CLOSING_ISSUE = "Can not close connection";
+		 String AUTO_LOAD_AMOUNT_ERROR = "Auto load amount is N.A";
 	}
 	public interface Validation {
 		public final String TRANX_CODE_PAY = "COT";

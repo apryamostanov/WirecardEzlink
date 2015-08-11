@@ -7,11 +7,9 @@
  
     <ImageView
         android:id="@+id/img"
-        android:layout_width="50dp"
-        android:layout_height="50dp"
-        
+        android:layout_width="60dp"
+        android:layout_height="60dp"
         android:contentDescription="@null"
-        android:src="@drawable/camera"
         android:gravity="center_vertical" />
  
     <RelativeLayout
@@ -34,7 +32,7 @@
             android:layout_height="wrap_content"
             android:layout_below="@+id/function"
             android:gravity="center"
-            android:textColor="#1733a5"
+            android:textColor="#0099cc"
             android:layout_marginLeft="8dp"
             android:text="Second" >
         </TextView>

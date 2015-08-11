@@ -14,6 +14,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
+import android.content.SharedPreferences.Editor;
 import android.nfc.NfcAdapter;
 import android.nfc.tech.IsoDep;
 import android.os.Bundle;
@@ -44,7 +45,8 @@ public class PaymentFragment extends Fragment {
 	private WebserviceConnection wsConnection;
 	public static ProgressDialog dialog;
 	private String autoloadStatus;
-
+	private String auloloadAmount;
+	
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
@@ -73,17 +75,45 @@ public class PaymentFragment extends Fragment {
 		
 		cardNo = sharedPreferences.getString("cardNo", null);
 		purseBalance = sharedPreferences.getString("balance", null);
-		autoloadStatus = sharedPreferences.getString("autoloadStatus", null);
+		autoloadStatus = sharedPreferences.getString("autoloadStatus", "");
+		auloloadAmount = sharedPreferences.getString("auloloadAmount", "0");
 		cardNo_textView.setText(cardNo);
 		purseBalance_textView.setText("$"+purseBalance);
 		paymentAmt_textView.setText("$"+paymentAmt);
 		merchantName_textView.setText(merchantName);
 		merchantRef_textView.setText(merchantRef);
 		
-		if(!autoloadStatus.equals("Enabled") && (Double.parseDouble(purseBalance) < Double.parseDouble(paymentAmt))) {
-			error_textView.setVisibility(View.VISIBLE);
-			error_content.setText(StringConstants.ErrorDecription.INSUFFICIENT_BALANCE);
-			payButton.setVisibility(View.INVISIBLE);
+		double balance = Double.parseDouble(purseBalance);
+		double amt = Double.parseDouble(paymentAmt);
+		double autoAmt = 0;
+		
+		if(autoloadStatus.equals("Enabled")) {
+			try {
+				autoAmt = Double.parseDouble(auloloadAmount);
+			} catch(Exception e) {
+				error_textView.setVisibility(View.VISIBLE);
+				error_content.setText(StringConstants.ErrorDecription.AUTO_LOAD_AMOUNT_ERROR);
+				payButton.setVisibility(View.INVISIBLE);
+			}
+		}
+		
+		if(autoloadStatus.equals("Enabled")) {
+			autoAmt = Double.parseDouble(auloloadAmount);
+			if(amt > (balance+autoAmt)) {
+				error_textView.setVisibility(View.VISIBLE);
+				error_content.setText(StringConstants.ErrorDecription.INSUFFICIENT_BALANCE);
+				payButton.setVisibility(View.INVISIBLE);
+			} else if((balance < amt) && (amt <= (balance+autoAmt) )) {
+				Editor editor = sharedPreferences.edit();
+				editor.putBoolean("needAutoLoad", true);
+				editor.commit();
+			}
+		} else {
+			if(balance < amt) {
+				error_textView.setVisibility(View.VISIBLE);
+				error_content.setText(StringConstants.ErrorDecription.INSUFFICIENT_BALANCE);
+				payButton.setVisibility(View.INVISIBLE);
+			}
 		}
 		
 		payButton.setOnClickListener(new OnClickListener() {

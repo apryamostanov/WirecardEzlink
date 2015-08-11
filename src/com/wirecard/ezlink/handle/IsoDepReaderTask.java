@@ -206,6 +206,7 @@ public class IsoDepReaderTask extends AsyncTask<IsoDep, Void, String> {
 					editor.putString("terminalRN", terminalRN);
 					editor.putString("balance", balance);
 					editor.putString("autoloadStatus", autoloadStatus);
+					editor.putString("auloloadAmount", auloloadAmount);
 					editor.putString("purseRequest", purseString.toString());
 //					editor.putString("purseRequest", common.hexString(b2));
 					editor.commit();
