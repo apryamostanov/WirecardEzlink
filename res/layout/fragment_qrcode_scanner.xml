@@ -17,7 +17,7 @@
         android:layout_below="@+id/ads"
         android:background="#ffffff"
         android:layout_margin="4dp"
-        android:divider="@android:color/darker_gray"
         android:dividerHeight="1dp" >
     </ListView>
+<!--         android:divider="@android:color/darker_gray" -->
 </RelativeLayout>

@@ -158,12 +158,15 @@ public class IsoDepReaderTask extends AsyncTask<IsoDep, Void, String> {
 				String purseStatus = card.getPusrseStatus(purseData);
 				String autoloadStatus = card.getALStatus(purseData);
 				String auloloadAmount = card.getALAmount(purseData);
+				boolean isSurrenderedCard = card.isSurrenderedCard(purseData);
+				
 				Log.d("card no", cardNo);
 				Log.d("balance", balance);
 				Log.d("expiry date", purseExpiryDate);
 				Log.d("purseStatus", purseStatus);
 				Log.d("autoloadStatus", autoloadStatus);
 				Log.d("auloloadAmount", auloloadAmount);
+				Log.d("isSurrenderedCard", isSurrenderedCard + "");
 				//Check card bin
 				boolean checkCardBin = card.checkCardBin(cardNo);
 				Log.d("CARDBIN",String.valueOf(checkCardBin));
@@ -188,6 +191,12 @@ public class IsoDepReaderTask extends AsyncTask<IsoDep, Void, String> {
 						return result;
 					}
 					
+					//isSurrenderedCard
+					if(isSurrenderedCard) {
+						result = "Card is invaid";
+						return result;
+					}
+					
 					//Check payment amount is less than $500.00
 					if(Double.parseDouble(qrCode.getQR_AMOUNT()) > 500) {
 						result = "Transaction amount is greater than S $500.00";
@@ -196,7 +205,7 @@ public class IsoDepReaderTask extends AsyncTask<IsoDep, Void, String> {
 					
 					//Check purse status
 					if(!purseStatus.equals("Enabled")) {
-						result = "Card status is not enabled";
+						result = "Card is invaid";
 						return result;
 					}
 				

@@ -34,14 +34,14 @@ public class ScanFragment extends Fragment implements OnItemClickListener{
 		scannerList = new ArrayList<Scanner>();
 		
 		Scanner scan = new Scanner(R.drawable.scan_barcode, "Scan QRCode", "Start Scanning with the camera");
-		Scanner manual = new Scanner(R.drawable.manual_key, "Manual Key-in", "Manually type in barcode");
-		Scanner decodeFromFile = new Scanner(R.drawable.file_decode, "Decode from File", "Choose a QR Code File");
-		Scanner decodeFromUrl = new Scanner(R.drawable.url_decode, "Decode from Url", "Insert the url of the qr code");
+//		Scanner manual = new Scanner(R.drawable.manual_key, "Manual Key-in", "Manually type in barcode");
+//		Scanner decodeFromFile = new Scanner(R.drawable.file_decode, "Decode from File", "Choose a QR Code File");
+//		Scanner decodeFromUrl = new Scanner(R.drawable.url_decode, "Decode from Url", "Insert the url of the qr code");
 		
 		scannerList.add(scan);
-		scannerList.add(manual);
-		scannerList.add(decodeFromFile);
-		scannerList.add(decodeFromUrl);
+//		scannerList.add(manual);
+//		scannerList.add(decodeFromFile);
+//		scannerList.add(decodeFromUrl);
 		
 		scanListView = (ListView) rootView.findViewById(R.id.listview);
 		ListScannerAdapter adapter = new ListScannerAdapter(getActivity(), scannerList);

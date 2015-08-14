@@ -40,7 +40,7 @@ public interface StringConstants {
 		 String DUPLICATED_TRANSACTION = "Duplicate Transaction";
 		 String INVALID_QRCODE = "Invalid QR-Code(Check Sum not match)";
 		 String INVALID_QRCODE_DATA = "Invalid QR Code Data (Invalid Amount or Response Code wrong)";
-		 String INVALID_CARD = "Invalid Card (Card Bin)";
+		 String INVALID_CARD = "Invalid Card";
 		 String CANNOT_DETECT_CARD = "Can not detect the ez-link card(Card Bin)";
 		 String BACKLIST_CARD = "Backlist card";
 		 String INSUFFICIENT_BALANCE = "Insufficient Balance";
@@ -133,5 +133,6 @@ public interface StringConstants {
 		String QRCODE_INVALID = "QRCode is invalid";
 		String QRCODE_BELONG_TO = "This QRCode doesn't belong to Ecommerce. Please scan right Ecommerce's QRCode.";
 		String TRANX_FAILURE = "Transaction is fail. Please scan QRCode again.";
+		String CARD_DIFFIRENT = "Invalid Card. Please put correct card.";
 	}
 }

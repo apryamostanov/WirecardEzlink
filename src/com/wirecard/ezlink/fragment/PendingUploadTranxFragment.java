@@ -48,7 +48,7 @@ public class PendingUploadTranxFragment extends Fragment {
 					+ StringConstants.MessageRemarks.RECEIPT_REQUEST_UPLOAD, StringConstants.MessageRemarks.PLEASE_WAIT, true);
 			new ReceiptAsyncTask().execute(list);
 		} else {
-			status.setText("There is no pending upload transactions");
+			status.setText("There is(are) no pending upload transaction(s)");
 		}
 		return rootView;
 	}

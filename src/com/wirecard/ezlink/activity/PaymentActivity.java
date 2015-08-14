@@ -365,8 +365,8 @@ public class PaymentActivity extends FragmentActivity {
 					}
 					String cardNumber = card.getCardNo(purseData);
 					if(!cardNo.equals(cardNumber)) {
-						wsConnection.uploadReceiptData("", new RecieptReqError(StringConstants.ErrorCode.ERROR_CODE_15, StringConstants.ErrorDecription.INVALID_CARD));
-						errorStr = getResources().getString(R.string.error_invalid_card);
+//						wsConnection.uploadReceiptData("", new RecieptReqError(StringConstants.ErrorCode.ERROR_CODE_15, StringConstants.ErrorDecription.INVALID_CARD));
+						errorStr = StringConstants.ErrorRemarks.CARD_DIFFIRENT;
 						return errorStr;
 					}
 					
@@ -420,7 +420,7 @@ public class PaymentActivity extends FragmentActivity {
 							Log.d("purseBalance", purseBalance);
 							// debit command is successful 
 							if(curentBal2 < Double.parseDouble(purseBalance)) {
-								wsConnection.uploadReceiptData("", new RecieptReqError(StringConstants.ErrorCode.ERROR_CODE_01, StringConstants.ErrorDecription.DEBIT_COMMAND_SUCCESSFUL_BUT_NO_RESPONSE_FROM_CARD));
+//								wsConnection.uploadReceiptData("", new RecieptReqError(StringConstants.ErrorCode.ERROR_CODE_01, StringConstants.ErrorDecription.DEBIT_COMMAND_SUCCESSFUL_BUT_NO_RESPONSE_FROM_CARD));
 								editor.putString("merchantName", merchantName);
 								editor.putString("paymentAmt", paymentAmt);
 								editor.putString("prevBal", purseBalance);
@@ -514,7 +514,7 @@ public class PaymentActivity extends FragmentActivity {
 				String cardNumber = card.getCardNo(purseData);
 				if(!cardNo.equals(cardNumber)) {
 					wsConnection.uploadReceiptData("", new RecieptReqError(StringConstants.ErrorCode.ERROR_CODE_15, StringConstants.ErrorDecription.INVALID_CARD));
-					errorStr = StringConstants.ErrorDecription.INVALID_CARD;
+					errorStr = StringConstants.ErrorRemarks.CARD_DIFFIRENT;
 					return errorStr;
 				}
 				
@@ -523,7 +523,7 @@ public class PaymentActivity extends FragmentActivity {
 				Log.d("curentBal", currentBalance + "");
 				// check the card balance is correct after payment is successful by comparing with  old and new balances.
 				boolean diffirentBalance = false;
-				boolean needAutoload = sharedPreferences.getBoolean("needAutoload", false);
+				boolean needAutoload = sharedPreferences.getBoolean("needAutoLoad", false);
 				if(needAutoload) {
 					String autoLoadAmt = sharedPreferences.getString("auloloadAmount", "0");
 					diffirentBalance = card.checkCurrentBalanceWithAutoLoadAmt(currentBalance, purseBalance, paymentAmt, autoLoadAmt);

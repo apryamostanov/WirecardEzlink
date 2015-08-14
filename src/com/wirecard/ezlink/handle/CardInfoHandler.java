@@ -18,6 +18,20 @@ public class CardInfoHandler {
 		BigDecimal balance = BigDecimal.valueOf((long) balanceStr, 2);
 		return String.valueOf(balance);
 	}
+	
+	public boolean isSurrenderedCard(String result) {
+		
+		byte[] s = Util.hexStringToByteArray(result.substring(134, 136));
+		if(s[0]==0xC0) {
+			return true;
+		}
+		String purseStatus = result.substring(2, 4);
+		byte[] b = Util.hexStringToByteArray(purseStatus);
+		if((b[0] != 0x01) && (b[0] != 0x03)) {
+			return true;
+		}
+		return false;
+	}
 
 	public String getCardNo(String result) {
 		String cardNo = result.substring(16, 32);

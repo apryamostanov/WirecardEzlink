@@ -35,7 +35,6 @@
     <string name="error_amount">Cannot payment. The payment amount is greater than the balance</string>
     <string name="error_qr_code">There is error occurs with QR Code.</string>
     <string name="error_detect">Cannot detect Ez-Link card. Please adjust card at the back of your phone.</string>
-    <string name="error_invalid_card">Invalid Card. Please put correct card.</string>
     <string name="error_qr_scan">QR code scanning Unsuccessful.</string>
     <string name="back_qr_scan">QR code scanning Unsuccessful.Please press back button to exit</string>
     <string name="confirm_guide">Please press Next button on the payment page in browser to complete the payment</string>
