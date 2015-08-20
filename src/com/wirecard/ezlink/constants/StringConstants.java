@@ -59,7 +59,7 @@ public interface StringConstants {
 		 String TRANSCEIVE_FAILED = "Transceive failed";
 		 String CARD_BALANCE_IS_NOT_CORRECT = "Card balance is not correct";
 		 String CONNECTION_ISSUE = "Connection with Backend Failed";
-		 String TAG_LOST = "Connection with Card Failed";
+		 String TAG_LOST = "Connection with Card Failed. Please tap Card again";
 		 String CONNECTION_CLOSING_ISSUE = "Can not close connection";
 		 String AUTO_LOAD_AMOUNT_ERROR = "Auto load amount is N.A";
 	}
@@ -134,5 +134,9 @@ public interface StringConstants {
 		String QRCODE_BELONG_TO = "This QRCode doesn't belong to Ecommerce. Please scan right Ecommerce's QRCode.";
 		String TRANX_FAILURE = "Transaction is fail. Please scan QRCode again.";
 		String CARD_DIFFIRENT = "Invalid Card. Please put correct card.";
+		String AMT_ALERT = "Transaction amount is greater than S $500.00";
+		String INVALID_CARD = "Invalid Card";
+		String EXPIRED_CARD = "Expired Card";
+		String CARD_NOT_EZLINK = "Card is not Ez-Link type";
 	}
 }

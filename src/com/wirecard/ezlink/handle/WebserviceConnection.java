@@ -19,6 +19,7 @@ import com.wirecard.ezlink.constants.StringConstants;
 import com.wirecard.ezlink.model.QRCode;
 import com.wirecard.ezlink.model.ReceiptRequest;
 import com.wirecard.ezlink.sqlite.DBHelper;
+import com.wirecard.ezlink.webservices.debitCommand.DebitCommandFault;
 import com.wirecard.ezlink.webservices.debitCommand.DebitCommandReq;
 import com.wirecard.ezlink.webservices.debitCommand.DebitCommandRes;
 import com.wirecard.ezlink.webservices.debitCommand.DebitCommandResError;
@@ -45,6 +46,8 @@ import com.wirecard.ezlink.webservices.tranxHistory.VDGTranxList;
 public class WebserviceConnection {
 	private Context _context;
 	private DBHelper db;
+	public static DebitCommandFault debitCommandFault;
+	
 	public WebserviceConnection(Context _context) {
 		this._context = _context;
 		this.db = new DBHelper(_context);
@@ -122,15 +125,19 @@ public class WebserviceConnection {
 			//get debit command
 			DebitCommandRes debitCommandRes = (DebitCommandRes) res_BODY.getProperty(0);
 			
-			DebitCommandResError debitCommandResError = (DebitCommandResError) res_BODY.getProperty(1);
-			String errorCode = debitCommandResError.DCERRORCODE;
-			editor.putString("errorCode", errorCode);
-			editor.commit();
 			debitCommand = (String) debitCommandRes.getProperty(3);
-			
 			//check transaction info with web service header info
 //			boolean match = Common.checkTranxInfo(qrCode, res_BODY., merchantRefNo, orderNo)
-		} catch (Exception e) {
+		} catch (DebitCommandFault fault) {
+			if(fault != null) {
+				if(fault.message.equals("TRANSACTION ALREADY COMPLETED") 
+						|| fault.message.equals("BLACKLISTED CARD") || fault.message.equals("TRANSACTION TIME OUT")) {
+					debitCommandFault = fault;
+				}
+			}
+		}
+		
+		catch (Exception e) {
 			exception = e.toString();
 			Log.e("getDebitCommandError", exception);
 //			e.printStackTrace();

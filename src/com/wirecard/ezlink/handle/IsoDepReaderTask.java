@@ -147,7 +147,7 @@ public class IsoDepReaderTask extends AsyncTask<IsoDep, Void, String> {
 				purseString.append(terminalRN);
 				purseString.append("00");
 				String purseData = modeAccess.getPurseData(purseString.toString());
-				if(purseData.length() < 48) {
+				if(purseData.length() < 134) {
 					result = StringConstants.ErrorDecription.INVALID_COMMAND_FROM_CARD;
 					return result;
 				}
@@ -171,7 +171,7 @@ public class IsoDepReaderTask extends AsyncTask<IsoDep, Void, String> {
 				boolean checkCardBin = card.checkCardBin(cardNo);
 				Log.d("CARDBIN",String.valueOf(checkCardBin));
 				if(!checkCardBin) {
-					result = "Card is not Ez-Link type";
+					result = StringConstants.ErrorRemarks.CARD_NOT_EZLINK;
 					return result;
 				}
 				
@@ -187,25 +187,25 @@ public class IsoDepReaderTask extends AsyncTask<IsoDep, Void, String> {
 					//Check expiry date
 					boolean cardExpiry = card.checkExpiryDate(purseCreationDate, purseExpiryDate);
 					if(cardExpiry) {
-						result = "Card is expired";
+						result = StringConstants.ErrorRemarks.EXPIRED_CARD;
 						return result;
 					}
 					
 					//isSurrenderedCard
 					if(isSurrenderedCard) {
-						result = "Card is invaid";
+						result = StringConstants.ErrorRemarks.INVALID_CARD;
 						return result;
 					}
 					
 					//Check payment amount is less than $500.00
 					if(Double.parseDouble(qrCode.getQR_AMOUNT()) > 500) {
-						result = "Transaction amount is greater than S $500.00";
+						result = StringConstants.ErrorRemarks.AMT_ALERT;
 						return result;
 					}
 					
 					//Check purse status
 					if(!purseStatus.equals("Enabled")) {
-						result = "Card is invaid";
+						result = StringConstants.ErrorRemarks.INVALID_CARD;
 						return result;
 					}
 				
@@ -252,20 +252,20 @@ public class IsoDepReaderTask extends AsyncTask<IsoDep, Void, String> {
 			} else {
 				NFCFragment.error.setVisibility(View.VISIBLE);
 				NFCFragment.error_content.setText(response);
-				if(response.contains("dead") || response.contains("die")) {
-					new AlertDialog.Builder(_context)
-			        .setTitle("Scan again..!!")
-			        .setMessage(StringConstants.MessageRemarks.SCAN_AGAIN_MSG)
-			        .setNegativeButton(android.R.string.no, null)
-			        .setPositiveButton(android.R.string.yes, new android.content.DialogInterface.OnClickListener() {
-						public void onClick(DialogInterface arg0, int arg) {
-							cancelCountDownTimer();
-							Intent in = new Intent(_context, QRCodeScannerActivity.class);
-							_context.startActivity(in);
-							((Activity) _context).finish();
-						}
-			        }).create().show();
-				}
+			}
+			if(response.contains("dead") || response.contains("die")) {
+				new AlertDialog.Builder(_context)
+		        .setTitle("Scan again..!!")
+		        .setMessage(StringConstants.MessageRemarks.SCAN_AGAIN_MSG)
+		        .setNegativeButton(android.R.string.no, null)
+		        .setPositiveButton(android.R.string.yes, new android.content.DialogInterface.OnClickListener() {
+					public void onClick(DialogInterface arg0, int arg) {
+						cancelCountDownTimer();
+						Intent in = new Intent(_context, QRCodeScannerActivity.class);
+						_context.startActivity(in);
+						((Activity) _context).finish();
+					}
+		        }).create().show();
 			}
 		} else {
 			cancelCountDownTimer();

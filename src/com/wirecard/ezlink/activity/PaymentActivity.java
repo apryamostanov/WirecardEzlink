@@ -27,6 +27,7 @@ import com.wirecard.ezlink.handle.WebserviceConnection;
 import com.wirecard.ezlink.model.QRCode;
 import com.wirecard.ezlink.navigationdrawer.DrawerItemCustomAdapter;
 import com.wirecard.ezlink.navigationdrawer.ObjectDrawerItem;
+import com.wirecard.ezlink.webservices.debitCommand.DebitCommandFault;
 import com.wirecard.ezlink.webservices.receipt.RecieptReqError;
 
 import android.app.Activity;
@@ -378,25 +379,14 @@ public class PaymentActivity extends FragmentActivity {
 						Log.d("debitCommand", "++CALL WS++"+System.currentTimeMillis());
 						debitCommand = wsConnection.getDebitCommand();
 						Log.d("debitCommand", "++RECIEVED WS++"+System.currentTimeMillis());
-						
-						//check if errorCode is null or not. If it is 12, so payment is timeout
-						String errorCode = sharedPreferences.getString("errorCode", null);
-						if(errorCode != null && errorCode.equals("12")) {
-							errorStr = StringConstants.ErrorDecription.COMMUNICATION_TIMEOUT;
-							editor.putString("errorCode", null);
-							editor.commit();
-							return errorStr;
-						}
 					}
 					if (debitCommand != null) {
 						if(!excuseDebit) {
 							noReceiptResponse = true;
 							//debitCommand = "90340000" + debitCommand + "00";
 							excuseDebit = true;
-						} else {
-//							isoDep.transceive(initByte);
-//							isoDep.transceive(getChallengeByte);
-						}
+						} 
+						
 						Log.d("debitCommand", debitCommand);
 						String receiptData = modeAccess.getReceipt(debitCommand);
 						// the mobile get receipt data from card
@@ -444,7 +434,12 @@ public class PaymentActivity extends FragmentActivity {
 							new CurrentBalanceTask().execute(isoDep);
 					}
 					else{
-						errorStr=StringConstants.ErrorDecription.CONNECTION_ISSUE;
+						if(WebserviceConnection.debitCommandFault != null) {
+							errorStr = WebserviceConnection.debitCommandFault.message;
+							WebserviceConnection.debitCommandFault = null;
+						} else {
+							errorStr=StringConstants.ErrorDecription.CONNECTION_ISSUE;
+						}
 						return errorStr;
 					}
 					
