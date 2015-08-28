@@ -181,8 +181,8 @@ int layout fragment_payment 0x7f03000d
 int layout fragment_pending_upload_tranx 0x7f03000e
 int layout fragment_qrcode 0x7f03000f
 int layout fragment_qrcode_scanner 0x7f030010
-int layout fragment_tabcard 0x7f030011
-int layout fragment_tabcard_tranxhistory 0x7f030012
+int layout fragment_tapcard 0x7f030011
+int layout fragment_tapcard_tranxhistory 0x7f030012
 int layout fragment_terms_and_conditions 0x7f030013
 int layout fragment_transaction_history 0x7f030014
 int layout help 0x7f030015

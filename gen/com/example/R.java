@@ -222,8 +222,8 @@ public final class R {
         public static final int fragment_pending_upload_tranx=0x7f03000e;
         public static final int fragment_qrcode=0x7f03000f;
         public static final int fragment_qrcode_scanner=0x7f030010;
-        public static final int fragment_tabcard=0x7f030011;
-        public static final int fragment_tabcard_tranxhistory=0x7f030012;
+        public static final int fragment_tapcard=0x7f030011;
+        public static final int fragment_tapcard_tranxhistory=0x7f030012;
         public static final int fragment_terms_and_conditions=0x7f030013;
         public static final int fragment_transaction_history=0x7f030014;
         public static final int help=0x7f030015;

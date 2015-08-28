@@ -15,7 +15,7 @@ public class TagCardFragment extends Fragment {
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
-		View rootView = inflater.inflate(R.layout.fragment_tabcard_tranxhistory, container, false);
+		View rootView = inflater.inflate(R.layout.fragment_tapcard_tranxhistory, container, false);
 		error = (TextView) rootView.findViewById(R.id.error2);
 		error_content = (TextView) rootView.findViewById(R.id.error_content2);
 		return rootView;

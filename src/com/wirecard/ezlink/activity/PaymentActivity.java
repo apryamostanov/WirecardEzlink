@@ -315,13 +315,13 @@ public class PaymentActivity extends FragmentActivity {
 			final IsoDep isoDep = IsoDep.get(tag);
 			TagCardFragment tagCardFragment = (TagCardFragment) fragmentManager.findFragmentByTag("fragment1");
 			if(tagCardFragment != null) {
-				dialog = ProgressDialog.show(PaymentActivity.this, StringConstants.MessageRemarks.HOLD_CARD, StringConstants.MessageRemarks.SCANNING, true);
+				dialog = ProgressDialog.show(PaymentActivity.this, StringConstants.MessageRemarks.HOLD_CARD, StringConstants.MessageRemarks.TRANX_HISTORY, true);
 				new com.wirecard.ezlink.handle.IsoDepReaderTask(this, null, dialog, true, "PaymentActivity").execute(isoDep);
 			} else {
 				payButton.setOnClickListener(new OnClickListener() {
 					@Override
 					public void onClick(View arg0) {
-						dialog = ProgressDialog.show(PaymentActivity.this, StringConstants.MessageRemarks.PROCESSING, StringConstants.MessageRemarks.TRANX_HISTORY, true);
+						dialog = ProgressDialog.show(PaymentActivity.this, StringConstants.MessageRemarks.PROCESSING, StringConstants.MessageRemarks.SCANNING, true);
 						// Request : Debit Command
 						if(tapCardAgain) {
 							new CurrentBalanceTask().execute(isoDep);
@@ -405,11 +405,20 @@ public class PaymentActivity extends FragmentActivity {
 								errorStr = StringConstants.ErrorDecription.INVALID_COMMAND_FROM_CARD;
 								return errorStr;
 							}
-							Double curentBal2 = Double.parseDouble(card.getPurseBal(purseData2));
+							String curentBal2 = card.getPurseBal(purseData2);
 							Log.d("curentBal2", curentBal2.toString());
 							Log.d("purseBalance", purseBalance);
 							// debit command is successful 
-							if(curentBal2 < Double.parseDouble(purseBalance)) {
+							boolean diffirentBalance = false;
+							boolean needAutoload = sharedPreferences.getBoolean("needAutoLoad", false);
+							if(needAutoload) {
+								String autoLoadAmt = sharedPreferences.getString("auloloadAmount", "0");
+								diffirentBalance = card.checkCurrentBalanceWithAutoLoadAmt(curentBal2, purseBalance, paymentAmt, autoLoadAmt);
+							} else {
+								diffirentBalance = card.checkCurrentBalance(curentBal2, purseBalance, paymentAmt);
+							}
+							
+							if(!diffirentBalance) {
 //								wsConnection.uploadReceiptData("", new RecieptReqError(StringConstants.ErrorCode.ERROR_CODE_01, StringConstants.ErrorDecription.DEBIT_COMMAND_SUCCESSFUL_BUT_NO_RESPONSE_FROM_CARD));
 								editor.putString("merchantName", merchantName);
 								editor.putString("paymentAmt", paymentAmt);
