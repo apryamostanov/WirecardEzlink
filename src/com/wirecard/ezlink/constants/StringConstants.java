@@ -43,7 +43,7 @@ public interface StringConstants {
 		 String INVALID_CARD = "Invalid Card";
 		 String CANNOT_DETECT_CARD = "Can not detect the ez-link card(Card Bin)";
 		 String BACKLIST_CARD = "Backlist card";
-		 String INSUFFICIENT_BALANCE = "Insufficient Balance";
+		 String INSUFFICIENT_BALANCE = "Insufficient Balance. Please scan QR code and use another card";
 		 String NFC_COMMUNICATION_ERROR = "NFC Communication Error";
 		 String NO_CARD_DETECTED = "No Card Detected";
 		 String COMMUNICATION_TIMEOUT = "Communication Timeout";
@@ -96,6 +96,7 @@ public interface StringConstants {
 		String PROCESSING = "Processing";
 		String TRANX_HISTORY = "Please wait while your transaction history is being processed...";
 		String HOLD_CARD = "Please hold on to your card";
+		String TRANX_PROCESS = "Please wait while your transaction is being processed...";
 		String SCANNING = "Scanning...";
 		String CLOSING_APP = "Closing Application..!!";
 		String ASKING_EXIT = "Do you really want to Exit..??";
@@ -131,9 +132,9 @@ public interface StringConstants {
 		 String TIME_OUT = "Payment timeout. Please scan new qrcode again.";
 		 String NO_CAMERA = "Cannot scan the Ez-Link QR Code. This mobile doesn\'t has camera";
 		String QRCODE_INVALID = "QRCode is invalid";
-		String QRCODE_BELONG_TO = "This QRCode doesn't belong to Ecommerce. Please scan right Ecommerce's QRCode.";
-		String TRANX_FAILURE = "Transaction is fail. Please scan QRCode again.";
-		String CARD_DIFFIRENT = "Invalid Card. Please put correct card.";
+		String QRCODE_BELONG_TO = "This QRCode doesn't belong to Ecommerce. Please scan right Ecommerce's QRCode";
+		String TRANX_FAILURE = "Processing Transaction Error";
+		String CARD_DIFFIRENT = "Invalid Card. Please put correct card";
 		String AMT_ALERT = "Transaction amount is greater than S $500.00";
 		String INVALID_CARD = "Invalid Card";
 		String EXPIRED_CARD = "Expired Card";

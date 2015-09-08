@@ -189,7 +189,7 @@ public class QRCodeScannerActivity extends Activity {
 			tv_merchantRefNo.setText(merchantRefNo);
 			tv_orderNo.setText(orderNo);
 			tv_merchantNo.setText(merchantNo);
-			tv_paymentAmt.setText("$" + paymentAmount);
+			tv_paymentAmt.setText("$" + String.format("%.2f", Double.parseDouble(paymentAmount)));
 			
 		} catch(Exception e) {
 			final Toast toast = Toast.makeText(this, StringConstants.ErrorRemarks.QRCODE_BELONG_TO, Toast.LENGTH_LONG);

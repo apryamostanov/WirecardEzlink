@@ -12,11 +12,12 @@ public class ReceiptRequest {
 	private String receiptData;
 	private String errorCode;
 	private String errorDescript;
+	private String tranxDate;
 	
 
 	public ReceiptRequest(String merchantNo, String orderNo,
 			String merchantRefNo, String can, BigDecimal amount,
-			String receiptData, String errorCode, String errorDescript) {
+			String receiptData, String errorCode, String errorDescript, String tranxDate) {
 		this.merchantNo = merchantNo;
 		this.orderNo = orderNo;
 		this.merchantRefNo = merchantRefNo;
@@ -25,6 +26,7 @@ public class ReceiptRequest {
 		this.receiptData = receiptData;
 		this.errorCode = errorCode;
 		this.errorDescript = errorDescript;
+		this.tranxDate = tranxDate;
 	}
 
 	public ReceiptRequest() {
@@ -103,12 +105,20 @@ public class ReceiptRequest {
 		this.errorDescript = errorDescript;
 	}
 
+	public String getTranxDate() {
+		return tranxDate;
+	}
+
+	public void setTranxDate(String tranxDate) {
+		this.tranxDate = tranxDate;
+	}
+
 	@Override
 	public String toString() {
 		return "ReceiptRequest [id=" + id + ", merchantNo=" + merchantNo
 				+ ", orderNo=" + orderNo + ", merchantRefNo=" + merchantRefNo
 				+ ", can=" + can + ", amount=" + amount + ", receiptData="
-				+ receiptData + ", errorCode=" + errorCode + ", errorDescript=" + errorDescript + "]";
+				+ receiptData + ", errorCode=" + errorCode + ", errorDescript="
+				+ errorDescript + ", tranxDate=" + tranxDate + "]";
 	}
-	
 }

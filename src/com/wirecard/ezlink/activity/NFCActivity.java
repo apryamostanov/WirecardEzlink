@@ -75,11 +75,18 @@ public class NFCActivity extends FragmentActivity {
     private CharSequence mDrawerTitle;
     private CharSequence mTitle;
     private FragmentManager fragmentManager;
+    public static boolean excuseDebit;
+    public static String debitCommand;
+    public static boolean excuseReceipt;
+    
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_tabcard);
 		
+		excuseDebit = false;
+		excuseReceipt = false;
+		debitCommand = null;
 		fragmentManager = getSupportFragmentManager();
 		// for proper titles
 		mTitle = mDrawerTitle = getTitle();
@@ -270,20 +277,20 @@ public class NFCActivity extends FragmentActivity {
 	private void handleIntent(Intent intent) {
 		String action = intent.getAction();
 		if (NfcAdapter.ACTION_TECH_DISCOVERED.equals(action)) {
-			dialog = ProgressDialog.show(NFCActivity.this, StringConstants.MessageRemarks.HOLD_CARD, StringConstants.MessageRemarks.SCANNING, true);
 			Log.e("NFC ACTIVITY", "Calling IsoDepReaderTask..");
 			detectCard = true;
 			Tag tag = intent.getParcelableExtra(NfcAdapter.EXTRA_TAG);
 			IsoDep isoDep = IsoDep.get(tag);
 			TagCardFragment tagCardFragment = (TagCardFragment) fragmentManager.findFragmentByTag("fragment1");
 			if(tagCardFragment != null) {
+				dialog = ProgressDialog.show(NFCActivity.this, StringConstants.MessageRemarks.HOLD_CARD, StringConstants.MessageRemarks.SCANNING, true);
 				Log.d("tagCardFragment is ", "not null");
 				isoDepReaderTask = new IsoDepReaderTask(this, sharedpreferences, dialog, true, "NFCActivity");
 			} else {
+				dialog = ProgressDialog.show(NFCActivity.this, StringConstants.MessageRemarks.PROCESSING, StringConstants.MessageRemarks.SCANNING, true);
 				isoDepReaderTask = new IsoDepReaderTask(this, sharedpreferences, dialog, false, "NFCActivity");
 			}
 			isoDepReaderTask.execute(isoDep);
-//			new IsoDepReaderTask2().execute(isoDep);
 		}
 	}
 	

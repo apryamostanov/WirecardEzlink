@@ -102,7 +102,7 @@ public class SecondActivity extends FragmentActivity implements ActionBar.TabLis
         // Set up the ViewPager, attaching the adapter and setting up a listener for when the
         // user swipes between sections.
         mViewPager = (ViewPager) findViewById(R.id.pager);
-        mViewPager.setOffscreenPageLimit(2);
+        mViewPager.setOffscreenPageLimit(1);
         mViewPager.setAdapter(mAppSectionsPagerAdapter);
         mViewPager.setOnPageChangeListener(new ViewPager.SimpleOnPageChangeListener() {
             @Override
@@ -110,12 +110,6 @@ public class SecondActivity extends FragmentActivity implements ActionBar.TabLis
                 actionBar.setSelectedNavigationItem(position);
             }
         });
-        
-        // Set color for Action Bar
-//        ColorDrawable colorDrawable = new ColorDrawable();
-//        colorDrawable.setColor(0x036687);
-//        actionBar.setBackgroundDrawable(colorDrawable);
-//        invalidateOptionsMenu();
         
         pageTitle = getResources().getStringArray(R.array.page_title_array);
         int[] icon = {R.drawable.camera, R.drawable.history, R.drawable.upload};

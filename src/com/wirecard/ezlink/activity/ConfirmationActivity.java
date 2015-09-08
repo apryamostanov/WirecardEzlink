@@ -74,13 +74,12 @@ public class ConfirmationActivity extends FragmentActivity {
         mDrawerList = (ListView) findViewById(R.id.left_drawer);
         
         // list the drawer items
-        ObjectDrawerItem[] drawerItem = new ObjectDrawerItem[5];
+        ObjectDrawerItem[] drawerItem = new ObjectDrawerItem[4];
         
         drawerItem[0] = new ObjectDrawerItem(R.drawable.ic_action_copy, StringConstants.MessageRemarks.CONFIRMATION);
         drawerItem[1] = new ObjectDrawerItem(R.drawable.ic_action_share, StringConstants.MessageRemarks.TRANX_HISTORY_STR);
-        drawerItem[2] = new ObjectDrawerItem(R.drawable.ic_action_share, StringConstants.MessageRemarks.CONTACT);
-        drawerItem[3] = new ObjectDrawerItem(R.drawable.ic_action_share, StringConstants.MessageRemarks.TERMS_CONDITIONS);
-        drawerItem[4] = new ObjectDrawerItem(R.drawable.ic_action_share, StringConstants.MessageRemarks.HELP);
+        drawerItem[2] = new ObjectDrawerItem(R.drawable.ic_action_share, StringConstants.MessageRemarks.TERMS_CONDITIONS);
+        drawerItem[3] = new ObjectDrawerItem(R.drawable.ic_action_share, StringConstants.MessageRemarks.HELP);
         
         // Pass the folderData to our ListView adapter
         DrawerItemCustomAdapter adapter = new DrawerItemCustomAdapter(this, R.layout.listview_item_row, drawerItem);
@@ -181,9 +180,6 @@ public class ConfirmationActivity extends FragmentActivity {
             fragment = new TagCardFragment();
             break;
         case 2:
-        	fragment = new ContactFragment();
-        	break;
-        case 3:
         	fragment = new TermsAndConditionsFragment();
         	break;
         case 4:

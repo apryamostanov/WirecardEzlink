@@ -38,7 +38,7 @@
     <string name="error_qr_scan">QR code scanning Unsuccessful.</string>
     <string name="back_qr_scan">QR code scanning Unsuccessful.Please press back button to exit</string>
     <string name="confirm_guide">Please press Next button on the payment page in browser to complete the payment</string>
-    <string name="qr_guide">Please check your purchase details and press Continue button to proceed with payment</string>
+    <string name="qr_guide">Please check your purchase details and press PAY button to proceed with payment</string>
 	<string name="expiry_date">Expiry Date</string>
 	<string name="options">Options</string>
     <string name="sound">Sound</string>
@@ -76,7 +76,6 @@
     <string-array name="navigation_drawer_confirmation">
         <item>Confirmation</item>
         <item>Transaction History</item>
-        <item>Contact</item>
         <item>Terms &amp; Conditions</item>
         <item>Help</item>
     </string-array>

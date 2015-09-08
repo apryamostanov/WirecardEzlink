@@ -29,6 +29,7 @@ import com.wirecard.ezlink.webservices.debitCommand.EZLING_WS_HEADER_1;
 import com.wirecard.ezlink.webservices.debitCommand.EZLING_WS_REQ_BODY;
 import com.wirecard.ezlink.webservices.debitCommand.EZLING_WS_RES_BODY;
 import com.wirecard.ezlink.webservices.debitCommand.EZLING_WS_RES_ENV;
+import com.wirecard.ezlink.webservices.receipt.RecieptFault;
 import com.wirecard.ezlink.webservices.receipt.RecieptReq;
 import com.wirecard.ezlink.webservices.receipt.RecieptReqError;
 import com.wirecard.ezlink.webservices.receipt.RecieptRes;
@@ -47,6 +48,7 @@ public class WebserviceConnection {
 	private Context _context;
 	private DBHelper db;
 	public static DebitCommandFault debitCommandFault;
+	public static RecieptFault recieptFault;
 	
 	public WebserviceConnection(Context _context) {
 		this._context = _context;
@@ -151,6 +153,7 @@ public class WebserviceConnection {
 	}
 	
 	public String uploadReceiptData(String receiptData, RecieptReqError reqError) {
+		
 		String exception = null;
 		String uploadResult = null;
 		QRCode qrCode = QRCode.getInstance();
@@ -177,17 +180,27 @@ public class WebserviceConnection {
 			com.wirecard.ezlink.webservices.receipt.EZLING_WS_RES_ENV ezling_WS_RES_ENV = recieptSoap.Reciept(ezling_WS_HEADER, ezling_WS_REQ_BODY);
 			com.wirecard.ezlink.webservices.receipt.EZLING_WS_RES_BODY ws_RES_BODY = (com.wirecard.ezlink.webservices.receipt.EZLING_WS_RES_BODY) ezling_WS_RES_ENV.getProperty(1);
 			RecieptRes res = (RecieptRes) ws_RES_BODY.getProperty(0);
-			String statusCode = res.STATUSCODE;
+
 			uploadResult = (String) res.getProperty(4);
+			
+		} catch (RecieptFault fault) {
+			if(fault != null) {
+				if(fault.message.equals("TRANSACTION ALREADY COMPLETED")) {
+					recieptFault = fault;
+				}
+			}
+				
 		} catch (Exception e) {
 			exception = e.toString();
 			Log.e("uploadReceiptDataError", exception);
 			//save receipt data into sqlite if sending receipt to host fail
-			db.addReceiptRequest(new ReceiptRequest(merchantNo, orderNo, merchantRefNo, cardNo, amount, receiptData, (String)reqError.getProperty(0), (String)reqError.getProperty(1)));
-//			e.printStackTrace();
+//			db.addReceiptRequest(new ReceiptRequest(merchantNo, orderNo, merchantRefNo, cardNo, amount, receiptData, (String)reqError.getProperty(0), (String)reqError.getProperty(1)));
 		} finally {
 			if(null!=exception && (exception.contains("EOFException") || exception.contains("EPIPE"))) {
 				return uploadReceiptData(receiptData, reqError);
+			} else if(null != exception) {
+				//save receipt data into sqlite if sending receipt to host fail
+				db.addReceiptRequest(new ReceiptRequest(merchantNo, orderNo, merchantRefNo, cardNo, amount, receiptData, (String)reqError.getProperty(0), (String)reqError.getProperty(1), date));
 			}
 		}
 		
@@ -223,12 +236,14 @@ public class WebserviceConnection {
 			exception = e.toString();
 			Log.e("receiptAgainError", exception);
 			// save This Receipt Request when can not upload it to host
-			db.addReceiptRequest(receiptRequest);
 //			e.printStackTrace();
 		} finally {
 			if(null!=exception && (exception.contains("EOFException") || exception.contains("EPIPE"))) {
 				return uploadReceiptDataAgain(receiptRequest);
-			}
+			} 
+//			else if(null!=exception) {
+//				db.addReceiptRequest(receiptRequest);
+//			}
 		}
 		return false;
 	}

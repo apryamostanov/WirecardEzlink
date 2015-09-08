@@ -80,7 +80,7 @@ public class TranxHistoryActivity extends Activity {
 		Bundle args = getIntent().getExtras();
 		cardNo = args.getString("cardNo");
 		cardNoTextView.setText(cardNo);
-		balanceTextView.setText(args.getString("purseBalance"));
+		balanceTextView.setText("$" + args.getString("purseBalance"));
 		expiryDateTextView.setText(args.getString("expiryDate"));
 		preActivity = args.getString("currentActivity");
 		new TransactionHistory().execute();

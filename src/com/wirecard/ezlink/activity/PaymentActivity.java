@@ -380,7 +380,7 @@ public class PaymentActivity extends FragmentActivity {
 						debitCommand = wsConnection.getDebitCommand();
 						Log.d("debitCommand", "++RECIEVED WS++"+System.currentTimeMillis());
 					}
-					if (debitCommand != null) {
+					if (null != debitCommand) {
 						if(!excuseDebit) {
 							noReceiptResponse = true;
 							//debitCommand = "90340000" + debitCommand + "00";
@@ -388,16 +388,13 @@ public class PaymentActivity extends FragmentActivity {
 						} 
 						
 						Log.d("debitCommand", debitCommand);
-						String receiptData = modeAccess.getReceipt(debitCommand);
+						String receiptData = modeAccess.getReceipt(debitCommand, wsConnection);
 						// the mobile get receipt data from card
 						noReceiptResponse = false;
 						
-						//String receiptData = Util.hexString(receiptByte);
-						Log.d("receiptData", receiptData);
-						
 //						check receiptData
-						if(!receiptData.contains("9000")) {
-							Log.d("Receipt Data error", "!9000");
+						if(null != receiptData && !receiptData.contains("9000")) {
+							Log.d("receiptData", receiptData);
 							//check purse balance is updated or not
 							modeAccess.getChallenge();
 							String purseData2 = modeAccess.getPurseData(purseRequest);
@@ -405,21 +402,21 @@ public class PaymentActivity extends FragmentActivity {
 								errorStr = StringConstants.ErrorDecription.INVALID_COMMAND_FROM_CARD;
 								return errorStr;
 							}
-							String curentBal2 = card.getPurseBal(purseData2);
+							String curentBal2 = String.valueOf(card.getPurseBal(purseData2));
 							Log.d("curentBal2", curentBal2.toString());
 							Log.d("purseBalance", purseBalance);
 							// debit command is successful 
-							boolean diffirentBalance = false;
+							boolean deductedBalance = false;
 							boolean needAutoload = sharedPreferences.getBoolean("needAutoLoad", false);
 							if(needAutoload) {
 								String autoLoadAmt = sharedPreferences.getString("auloloadAmount", "0");
-								diffirentBalance = card.checkCurrentBalanceWithAutoLoadAmt(curentBal2, purseBalance, paymentAmt, autoLoadAmt);
+//								deductedBalance = card.checkCurrentBalanceWithAutoLoadAmt(curentBal2, purseBalance, paymentAmt, autoLoadAmt);
 							} else {
-								diffirentBalance = card.checkCurrentBalance(curentBal2, purseBalance, paymentAmt);
+//								deductedBalance = card.checkCurrentBalance(curentBal2, purseBalance, paymentAmt);
 							}
 							
-							if(!diffirentBalance) {
-//								wsConnection.uploadReceiptData("", new RecieptReqError(StringConstants.ErrorCode.ERROR_CODE_01, StringConstants.ErrorDecription.DEBIT_COMMAND_SUCCESSFUL_BUT_NO_RESPONSE_FROM_CARD));
+							if(deductedBalance) {
+								wsConnection.uploadReceiptData("", new RecieptReqError(StringConstants.ErrorCode.ERROR_CODE_01, StringConstants.ErrorDecription.DEBIT_COMMAND_SUCCESSFUL_BUT_NO_RESPONSE_FROM_CARD));
 								editor.putString("merchantName", merchantName);
 								editor.putString("paymentAmt", paymentAmt);
 								editor.putString("prevBal", purseBalance);
@@ -433,14 +430,31 @@ public class PaymentActivity extends FragmentActivity {
 								errorStr = StringConstants.ErrorRemarks.TRANX_FAILURE;
 								return errorStr;
 							}
+						} else if(null != receiptData) {
+							try {
+								String receiptResponse = null;
+								Log.d("receiptData", receiptData);
+								Log.d("RECIEPT", "++CALL WS++"+System.currentTimeMillis());
+								// Upload receipt data
+								receiptResponse = wsConnection.uploadReceiptData(receiptData, new RecieptReqError(StringConstants.ErrorCode.ERROR_CODE_00, StringConstants.ErrorDecription.SUCCESSFUL));
+								Log.d("RECIEPT", "++RESULT WS++"+System.currentTimeMillis());
+								if(receiptResponse==null) {
+									if(WebserviceConnection.recieptFault != null) {
+										errorStr = WebserviceConnection.recieptFault.message;
+										WebserviceConnection.recieptFault = null;
+										return errorStr;
+									} 
+									
+								}
+							} catch(Exception e) {
+								Log.e("uploadReceiptData Error", e.toString());
+							} finally {
+								new CurrentBalanceTask().execute(isoDep);
+							}
+						} else {
+							errorStr=StringConstants.ErrorDecription.TAG_LOST;
+							return errorStr;
 						}
-						
-							Log.d("RECIEPT", "++CALL WS++"+System.currentTimeMillis());
-							// Upload receipt data
-							wsConnection.uploadReceiptData(receiptData, new RecieptReqError(StringConstants.ErrorCode.ERROR_CODE_00, StringConstants.ErrorDecription.SUCCESSFUL));
-							Log.d("RECIEPT", "++RESULT WS++"+System.currentTimeMillis());
-							
-							new CurrentBalanceTask().execute(isoDep);
 					}
 					else{
 						if(WebserviceConnection.debitCommandFault != null) {
@@ -517,26 +531,26 @@ public class PaymentActivity extends FragmentActivity {
 				
 				String cardNumber = card.getCardNo(purseData);
 				if(!cardNo.equals(cardNumber)) {
-					wsConnection.uploadReceiptData("", new RecieptReqError(StringConstants.ErrorCode.ERROR_CODE_15, StringConstants.ErrorDecription.INVALID_CARD));
+//					wsConnection.uploadReceiptData("", new RecieptReqError(StringConstants.ErrorCode.ERROR_CODE_15, StringConstants.ErrorDecription.INVALID_CARD));
 					errorStr = StringConstants.ErrorRemarks.CARD_DIFFIRENT;
 					return errorStr;
 				}
 				
-				String currentBalance = card.getPurseBal(purseData);
+				String currentBalance = String.valueOf(card.getPurseBal(purseData));
 				Log.d("preBal", purseBalance);
 				Log.d("curentBal", currentBalance + "");
 				// check the card balance is correct after payment is successful by comparing with  old and new balances.
-				boolean diffirentBalance = false;
+				boolean deductedBalance = false;
 				boolean needAutoload = sharedPreferences.getBoolean("needAutoLoad", false);
 				if(needAutoload) {
 					String autoLoadAmt = sharedPreferences.getString("auloloadAmount", "0");
-					diffirentBalance = card.checkCurrentBalanceWithAutoLoadAmt(currentBalance, purseBalance, paymentAmt, autoLoadAmt);
+//					deductedBalance = card.checkCurrentBalanceWithAutoLoadAmt(currentBalance, purseBalance, paymentAmt, autoLoadAmt);
 				} else {
-					diffirentBalance = card.checkCurrentBalance(currentBalance, purseBalance, paymentAmt);
+//					deductedBalance = card.checkCurrentBalance(currentBalance, purseBalance, paymentAmt);
 				}
 				
-				if(!diffirentBalance) {
-					wsConnection.uploadReceiptData("", new RecieptReqError(StringConstants.ErrorCode.ERROR_CODE_34, StringConstants.ErrorDecription.CARD_BALANCE_IS_NOT_CORRECT));
+				if(!deductedBalance) {
+//					wsConnection.uploadReceiptData("", new RecieptReqError(StringConstants.ErrorCode.ERROR_CODE_34, StringConstants.ErrorDecription.CARD_BALANCE_IS_NOT_CORRECT));
 					errorStr = StringConstants.ErrorDecription.CARD_BALANCE_IS_NOT_CORRECT;
 					return errorStr;
 				}

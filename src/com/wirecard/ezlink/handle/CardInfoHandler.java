@@ -12,54 +12,54 @@ import android.util.Log;
 
 public class CardInfoHandler {
 	
-	public String getPurseBal(String result) {
+	public static double getPurseBal(String result) {
 		String purseBal = result.substring(4, 10);
 		int balanceStr = Integer.parseInt(purseBal, 16);
 		BigDecimal balance = BigDecimal.valueOf((long) balanceStr, 2);
-		return String.valueOf(balance);
+		return balance.doubleValue();
 	}
 	
-	public boolean isSurrenderedCard(String result) {
-		
+	public static boolean isSurrenderedCard(String result) {
+		boolean check = false;
 		int test = Integer.parseInt(result.substring(132, 134),16);
 		if((test & 0xC0)!=0){
-			return true;
+			check = true;
 		}
 		
 		String purseStatus = result.substring(2, 4);
 		byte[] b = Util.hexStringToByteArray(purseStatus);
 		if((b[0] != 0x01) && (b[0] != 0x03)) {
-			return true;
+			check = true;
 		}
 		
-		double balance = Double.parseDouble(getPurseBal(result));
+		double balance = getPurseBal(result);
 		if(balance>500) {
-			return true;
+			check = true;
 		}
-		return false;
+		return check;
 	}
 
-	public String getCardNo(String result) {
+	public static String getCardNo(String result) {
 		String cardNo = result.substring(16, 32);
 		return cardNo;
 	}
 
-	public String getCardSN(String result) {
+	public static String getCardSN(String result) {
 		String cardSN = result.substring(32, 48);
 		return cardSN;
 	}
 	
-	public String getPurseCreationDate(String result) {
+	public static String getPurseCreationDate(String result) {
 		String purseExpiryDate = getDate(result.substring(52, 56));
 		return purseExpiryDate;
 	}
 	
-	public String getPurseExpiryDate(String result) {
+	public static String getPurseExpiryDate(String result) {
 		String purseExpiryDate = getDate(result.substring(48, 52));
 		return purseExpiryDate;
 	}
 	
-	public String getDate(String s)
+	public static String getDate(String s)
     {
         long l = 1000L * (0x15180L * (9131L + Long.parseLong(s, 16)));
         Date date = new Date();
@@ -67,7 +67,7 @@ public class CardInfoHandler {
         return (new SimpleDateFormat("dd/MM/yyyy")).format(date);
     }
 	
-	public boolean checkExpiryDate(String creationDate, String expiryDate) {
+	public static boolean checkExpiryDate(String creationDate, String expiryDate) {
 		SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy", Locale.ENGLISH);
 		boolean cardExpired = true;
 		try {
@@ -82,7 +82,7 @@ public class CardInfoHandler {
 		return cardExpired;
 	}
 	
-	public boolean checkCardBin(String cardNo) {
+	public static boolean checkCardBin(String cardNo) {
 		boolean result = false;
 		int card = Integer.parseInt(cardNo.substring(0, 4));
 		if(card >= 1000 && card <= 1010) {
@@ -91,7 +91,7 @@ public class CardInfoHandler {
 		return result;
 	}
 	
-	public String getPusrseStatus(String result)
+	public static String getPusrseStatus(String result)
     {
         if ((byte)(1 & Byte.parseByte(result.substring(2, 4), 16)) == 0)
         {
@@ -102,22 +102,22 @@ public class CardInfoHandler {
         }
     }
 
-	public boolean checkCurrentBalance(String currentBalance,
-		String previousBalance, String paymentAmt) {
+	public static boolean checkCurrentBalance(double currentBalance,
+		double previousBalance, String paymentAmt) {
 		boolean check = false;
-		BigDecimal currentB = BigDecimal.valueOf(Double.parseDouble(currentBalance));
-		BigDecimal oldB = BigDecimal.valueOf(Double.parseDouble(previousBalance));
+		BigDecimal currentB = BigDecimal.valueOf(currentBalance);
+		BigDecimal oldB = BigDecimal.valueOf(previousBalance);
 		BigDecimal paymentA = BigDecimal.valueOf(Double.parseDouble(paymentAmt));
 		BigDecimal subBalance = oldB.subtract(paymentA);
 		if(currentB.compareTo(subBalance) == 0) {
 			check = true;
 		} else {
-			Log.d("Subtract two value be wrong: ", subBalance.toString());
+			Log.e("Subtract two value be wrong","");
 		}
 		return check;
 	}
 	
-	public String getALStatus(String result)
+	public static String getALStatus(String result)
     {
         byte byte0 = Byte.parseByte(result.substring(2, 4), 16);
         if ((byte)(byte0 & 1) == 0)
@@ -133,7 +133,7 @@ public class CardInfoHandler {
         }
     }
 	
-	public String getALAmount(String result)
+	public static String getALAmount(String result)
     {
         byte byte0 = Byte.parseByte(result.substring(2, 4), 16);
         if ((byte)(byte0 & 1) == 0)
@@ -149,7 +149,7 @@ public class CardInfoHandler {
         }
     }
 	
-	public String getAmount(String s, String s1)
+	public static String getAmount(String s, String s1)
     {
         if (s1.startsWith("F0"))
         {
@@ -182,7 +182,7 @@ public class CardInfoHandler {
         }
     }
 	
-	private String dotAppending(String s)
+	private static String dotAppending(String s)
     {
         int i = s.indexOf(".");
         String s1;
@@ -200,18 +200,18 @@ public class CardInfoHandler {
         return s1;
     }
 
-	public boolean checkCurrentBalanceWithAutoLoadAmt(String currentBalance,
-			String previousBalance, String paymentAmt, String autoLoadAmt) {
+	public static boolean checkCurrentBalanceWithAutoLoadAmt(double currentBalance,
+			double previousBalance, String paymentAmt, String autoLoadAmt) {
 		boolean check = false;
-		BigDecimal currentB = BigDecimal.valueOf(Double.parseDouble(currentBalance));
-		BigDecimal oldB = BigDecimal.valueOf(Double.parseDouble(previousBalance));
+		BigDecimal currentB = BigDecimal.valueOf(currentBalance);
+		BigDecimal oldB = BigDecimal.valueOf(previousBalance);
 		BigDecimal paymentA = BigDecimal.valueOf(Double.parseDouble(paymentAmt));
 		BigDecimal autoloadA = BigDecimal.valueOf(Double.parseDouble(autoLoadAmt));
 		BigDecimal subBalance = (oldB.add(autoloadA)).subtract(paymentA);
 		if(currentB.compareTo(subBalance) == 0) {
 			check = true;
 		} else {
-			Log.d("Subtract two value be wrong: ", subBalance.toString());
+			Log.e("Subtract two value be wrong","");
 		}
 		return check;
 	}

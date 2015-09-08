@@ -31,10 +31,11 @@ public class DBHelper extends SQLiteOpenHelper {
     private static final String KEY_RECEIPT_DATA = "receiptdata";
     private static final String KEY_ERROR_CODE = "errorcode";
     private static final String KEY_ERROR_DESC = "errordesc";
+    private static final String KEY_TRANX_DATE = "tranxdate";
     
 	private static final String[] COLUMNS = { KEY_ID, KEY_MERCHANT_NO,
 			KEY_ORDER_NO, KEY_MERCHANT_REF_NO, KEY_CAN, KEY_AMOUNT,
-			KEY_RECEIPT_DATA, KEY_ERROR_CODE, KEY_ERROR_DESC };
+			KEY_RECEIPT_DATA, KEY_ERROR_CODE, KEY_ERROR_DESC, KEY_TRANX_DATE };
 
 	public DBHelper(Context context) {
 		super(context, DATABASE_NAME, null, DATABASE_VERSION);	
@@ -51,7 +52,8 @@ public class DBHelper extends SQLiteOpenHelper {
 				"amount TEXT, "+
 				"receiptdata TEXT, "+
 				"errorcode TEXT, "+
-				"errordesc TEXT )";
+				"errordesc TEXT, "+
+				"tranxdate TEXT )";
 		
 		db.execSQL(CREATE_RECEIPT_REQUEST_TABLE);
 	}
@@ -77,6 +79,7 @@ public class DBHelper extends SQLiteOpenHelper {
         values.put(KEY_RECEIPT_DATA, receiptRequest.getReceiptData()); // get receipt data
         values.put(KEY_ERROR_CODE, receiptRequest.getErrorCode()); // get error code data
         values.put(KEY_ERROR_DESC, receiptRequest.getErrorDescript()); // get error desc data
+        values.put(KEY_TRANX_DATE, receiptRequest.getTranxDate()); // get tranx date
  
         // 3. insert
         db.insert(TABLE_RECEIPT_REQUEST, // table
@@ -119,6 +122,7 @@ public class DBHelper extends SQLiteOpenHelper {
 	        receiptRequest.setReceiptData(cursor.getString(6));
 	        receiptRequest.setErrorCode(cursor.getString(7));
 	        receiptRequest.setErrorDescript(cursor.getString(8));
+	        receiptRequest.setTranxDate(cursor.getString(9));
 	
 			Log.d("get receiptRequest("+id+")", receiptRequest.toString());
 			
@@ -156,6 +160,7 @@ public class DBHelper extends SQLiteOpenHelper {
 	                receiptRequest.setReceiptData(cursor.getString(6));
 	                receiptRequest.setErrorCode(cursor.getString(7));
 	                receiptRequest.setErrorDescript(cursor.getString(8));
+	                receiptRequest.setTranxDate(cursor.getString(9));
 	                receiptRequestList.add(receiptRequest);
 	            } while (cursor.moveToNext());
 	        }
@@ -184,6 +189,7 @@ public class DBHelper extends SQLiteOpenHelper {
         values.put(KEY_RECEIPT_DATA, receiptRequest.getReceiptData()); // get receipt data
         values.put(KEY_ERROR_CODE, receiptRequest.getErrorCode()); // get error code data
         values.put(KEY_ERROR_DESC, receiptRequest.getErrorDescript()); // get error desc data
+        values.put(KEY_TRANX_DATE, receiptRequest.getTranxDate()); // get tranx date
  
         // 3. updating row
         int i = db.update(TABLE_RECEIPT_REQUEST, //table

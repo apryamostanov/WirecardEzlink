@@ -2,6 +2,9 @@ package com.wirecard.ezlink.handle;
 
 import java.io.IOException;
 
+import com.wirecard.ezlink.constants.StringConstants;
+import com.wirecard.ezlink.webservices.receipt.RecieptReqError;
+
 import android.nfc.tech.IsoDep;
 import android.util.Log;
 
@@ -21,11 +24,8 @@ public class ReaderModeAccess {
 		initByte[5] = 64;
         byte[] initRespose = null;
 		try {
-			Log.d("init()", "request: " + Util.hexString(initByte));
 			initRespose = isoDep.transceive(initByte);
-	        Log.d("init()", "response: " + Util.hexString(initRespose));
 		} catch (IOException e) {
-			
 		}
         return initRespose;
 	}
@@ -77,7 +77,7 @@ public class ReaderModeAccess {
 		return purseData;
 	}
 	
-	public String getReceipt(String debitCommand) {
+	public String getReceipt(String debitCommand, WebserviceConnection wsConnection) {
 		String receiptData = null;
 		try {
 			debitCommand = "90340000" + debitCommand + "00";
@@ -85,6 +85,7 @@ public class ReaderModeAccess {
 			byte[] receiptResponse = isoDep.transceive(debitCommandByte);
 			receiptData = Util.hexString(receiptResponse);
 		} catch (IOException e) {
+			//wsConnection.uploadReceiptData("", new RecieptReqError(StringConstants.ErrorCode.ERROR_CODE_01, StringConstants.ErrorDecription.DEBIT_COMMAND_SUCCESSFUL_BUT_NO_RESPONSE_FROM_CARD));
 		}
 		return receiptData;
 	}
