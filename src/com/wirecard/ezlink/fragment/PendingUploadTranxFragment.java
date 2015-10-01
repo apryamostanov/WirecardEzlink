@@ -1,11 +1,21 @@
 package com.wirecard.ezlink.fragment;
 
+import static com.wirecard.ezlink.listView.Constant.FIRST_COLUMN;
+import static com.wirecard.ezlink.listView.Constant.FOURTH_COLUMN;
+import static com.wirecard.ezlink.listView.Constant.SECOND_COLUMN;
+import static com.wirecard.ezlink.listView.Constant.THIRD_COLUMN;
+
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import com.example.R;
+import com.wirecard.ezlink.activity.SecondActivity;
+import com.wirecard.ezlink.activity.TranxHistoryActivity;
 import com.wirecard.ezlink.activity.WelcomeActivity;
 import com.wirecard.ezlink.constants.StringConstants;
 import com.wirecard.ezlink.handle.WebserviceConnection;
+import com.wirecard.ezlink.listView.ListviewAdapter;
 import com.wirecard.ezlink.model.ReceiptRequest;
 import com.wirecard.ezlink.sqlite.DBHelper;
 
@@ -20,6 +30,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ListView;
 import android.widget.TextView;
 
 public class PendingUploadTranxFragment extends Fragment {
@@ -27,6 +38,8 @@ public class PendingUploadTranxFragment extends Fragment {
 	private Dialog dialog;
 	private boolean uploadToHost = false;
 	TextView status;
+	private ListView lview;
+	TextView tranx_label;
 	
 	public PendingUploadTranxFragment() {
 	}
@@ -36,60 +49,30 @@ public class PendingUploadTranxFragment extends Fragment {
 
 		View rootView = inflater.inflate(R.layout.fragment_pending_upload_tranx, container, false);
 		status = (TextView) rootView.findViewById(R.id.status);
+		tranx_label = (TextView) rootView.findViewById(R.id.tranx_label);
 		wsConnection = new WebserviceConnection(getActivity());
-		//check there are any Receipt requests have send to host yet.
-		DBHelper db = new DBHelper(getActivity());
-		List<ReceiptRequest> list = db.getAllReceiptRequest();
-		uploadToHost = list.isEmpty()? false:true;
-		Log.d("uploadToHost", String.valueOf(uploadToHost));
+		lview = (ListView) rootView.findViewById(R.id.listview);
 		
-		if(uploadToHost) {
-			dialog = ProgressDialog.show(getActivity(), StringConstants.MessageRemarks.THERE_ARE + list.size() 
-					+ StringConstants.MessageRemarks.RECEIPT_REQUEST_UPLOAD, StringConstants.MessageRemarks.PLEASE_WAIT, true);
-			new ReceiptAsyncTask().execute(list);
-		} else {
-			status.setText("There is(are) no pending upload transaction(s)");
+		status.setText(SecondActivity.pendingUploadStatus);
+		ArrayList<HashMap<String, String>> list = new ArrayList<HashMap<String, String>>();
+		HashMap<String, String> temp;
+		List<ReceiptRequest> pendingUploadList = SecondActivity.pendingUploadList;
+		if(!pendingUploadList.isEmpty()) {
+			tranx_label.setVisibility(View.VISIBLE);
 		}
+		for (int i = 0; i < pendingUploadList.size(); i++) {
+			temp = new HashMap<String, String>();
+			ReceiptRequest receipt = pendingUploadList.get(i);
+			temp.put(FIRST_COLUMN, receipt.getMerchantNo());
+			temp.put(SECOND_COLUMN, String.valueOf(receipt.getAmount()));
+			temp.put(THIRD_COLUMN, receipt.getErrorDescript());
+			temp.put(FOURTH_COLUMN, receipt.getTranxDate());
+			list.add(temp);
+		}
+
+		ListviewAdapter adapter = new ListviewAdapter(
+				getActivity(), list);
+		lview.setAdapter(adapter);
 		return rootView;
-	}
-
-	private class ReceiptAsyncTask extends AsyncTask<List<ReceiptRequest>, Integer, Boolean> {
-		@Override
-		protected Boolean doInBackground(List<ReceiptRequest>... params) {
-			
-			for (int i = 0; i < params[0].size(); i++) {
-				try {
-					ReceiptRequest receipt = params[0].get(i);
-					publishProgress(params[0].size() - i);
-					if(wsConnection.uploadReceiptDataAgain(receipt) == false) {
-						return false;
-					}
-				} catch (Exception e) {
-					Log.e("Pending Upload Tranx Error: ", e.toString());
-					return false;
-				}
-			}
-
-			return true;
-		}
-
-		@Override
-		protected void onProgressUpdate(Integer... values) {
-			dialog.setTitle("There are " + values[0] + " Receipt Request need to upload to host");
-		}
-
-		@Override
-		protected void onPostExecute(Boolean result) {
-			if(result == false) {
-				status.setText("There is some problems to upload pending transaction");
-			} else {
-				status.setText("There is no pending upload transaction");
-			}
-			if (dialog != null && dialog.isShowing()) {
-				dialog.dismiss();
-				dialog = null;
-			}
-		}
-		
 	}
 }

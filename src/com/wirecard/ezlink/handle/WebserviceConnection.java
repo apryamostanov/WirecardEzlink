@@ -194,7 +194,6 @@ public class WebserviceConnection {
 			exception = e.toString();
 			Log.e("uploadReceiptDataError", exception);
 			//save receipt data into sqlite if sending receipt to host fail
-//			db.addReceiptRequest(new ReceiptRequest(merchantNo, orderNo, merchantRefNo, cardNo, amount, receiptData, (String)reqError.getProperty(0), (String)reqError.getProperty(1)));
 		} finally {
 			if(null!=exception && (exception.contains("EOFException") || exception.contains("EPIPE"))) {
 				return uploadReceiptData(receiptData, reqError);

@@ -1,0 +1,127 @@
+#
+# A fatal error has been detected by the Java Runtime Environment:
+#
+#  Internal Error (javaClasses.cpp:136), pid=10688, tid=7228
+#  fatal error: Invalid layout of preloaded class
+#
+# JRE version:  (7.0_71-b14) (build )
+# Java VM: Java HotSpot(TM) 64-Bit Server VM (24.71-b01 mixed mode windows-amd64 compressed oops)
+# Failed to write core dump. Minidumps are not enabled by default on client versions of Windows
+#
+# If you would like to submit a bug report, please visit:
+#   http://bugreport.sun.com/bugreport/crash.jsp
+#
+
+---------------  T H R E A D  ---------------
+
+Current thread (0x00000000022f1000):  JavaThread "Unknown thread" [_thread_in_vm, id=7228, stack(0x0000000002190000,0x0000000002290000)]
+
+Stack: [0x0000000002190000,0x0000000002290000]
+[error occurred during error reporting (printing stack bounds), id 0xc0000005]
+
+
+---------------  P R O C E S S  ---------------
+
+Java Threads: ( => current thread )
+
+Other Threads:
+
+=>0x00000000022f1000 (exited) JavaThread "Unknown thread" [_thread_in_vm, id=7228, stack(0x0000000002190000,0x0000000002290000)]
+
+VM state:not at safepoint (not fully initialized)
+
+VM Mutex/Monitor currently owned by a thread: None
+
+GC Heap History (0 events):
+No events
+
+Deoptimization events (0 events):
+No events
+
+Internal exceptions (0 events):
+No events
+
+Events (10 events):
+Event: 0.012 loading class 0x0000000002337fd0 done
+Event: 0.012 loading class 0x00000000023379f0 done
+Event: 0.012 loading class 0x00000000023379d0
+Event: 0.012 loading class 0x000000000233fb60
+Event: 0.012 loading class 0x000000000233fb60 done
+Event: 0.012 loading class 0x000000000233fb90
+Event: 0.012 loading class 0x000000000233fb90 done
+Event: 0.012 loading class 0x000000000233fbc0
+Event: 0.012 loading class 0x000000000233fbc0 done
+Event: 0.012 loading class 0x00000000023379d0 done
+
+
+Dynamic libraries:
+0x00007ff6d6ed0000 - 0x00007ff6d6f03000 	C:\Program Files\Java\jdk1.7.0_71\bin\javaw.exe
+0x00007ffe5c420000 - 0x00007ffe5c5cc000 	C:\windows\SYSTEM32\ntdll.dll
+0x00007ffe5b730000 - 0x00007ffe5b86e000 	C:\windows\system32\KERNEL32.DLL
+0x00007ffe59700000 - 0x00007ffe59815000 	C:\windows\system32\KERNELBASE.dll
+0x00007ffe580e0000 - 0x00007ffe5816e000 	C:\windows\system32\apphelp.dll
+0x00007ffe3edf0000 - 0x00007ffe3ee43000 	C:\windows\AppPatch\AppPatch64\AcGenral.DLL
+0x00007ffe5bf80000 - 0x00007ffe5c02a000 	C:\windows\system32\msvcrt.dll
+0x00007ffe593e0000 - 0x00007ffe5940e000 	C:\windows\SYSTEM32\SspiCli.dll
+0x00007ffe5bf20000 - 0x00007ffe5bf74000 	C:\windows\system32\SHLWAPI.dll
+0x00007ffe5baf0000 - 0x00007ffe5bc67000 	C:\windows\system32\USER32.dll
+0x00007ffe5b8f0000 - 0x00007ffe5ba84000 	C:\windows\system32\ole32.dll
+0x00007ffe59ab0000 - 0x00007ffe5afc9000 	C:\windows\system32\SHELL32.dll
+0x00007ffe58b60000 - 0x00007ffe58b81000 	C:\windows\SYSTEM32\USERENV.dll
+0x00007ffe5b680000 - 0x00007ffe5b72a000 	C:\windows\system32\ADVAPI32.dll
+0x00007ffe497a0000 - 0x00007ffe497be000 	C:\windows\SYSTEM32\MPR.dll
+0x00007ffe5b420000 - 0x00007ffe5b561000 	C:\windows\system32\RPCRT4.dll
+0x00007ffe5c030000 - 0x00007ffe5c089000 	C:\windows\SYSTEM32\sechost.dll
+0x00007ffe5b200000 - 0x00007ffe5b411000 	C:\windows\SYSTEM32\combase.dll
+0x00007ffe5c2d0000 - 0x00007ffe5c420000 	C:\windows\system32\GDI32.dll
+0x00007ffe59580000 - 0x00007ffe59595000 	C:\windows\SYSTEM32\profapi.dll
+0x00007ffe58000000 - 0x00007ffe580b2000 	C:\windows\SYSTEM32\SHCORE.dll
+0x00007ffe5b570000 - 0x00007ffe5b5a6000 	C:\windows\system32\IMM32.DLL
+0x00007ffe5afe0000 - 0x00007ffe5b132000 	C:\windows\system32\MSCTF.dll
+0x00007ffe59530000 - 0x00007ffe59561000 	C:\windows\system32\nvinitx.dll
+0x000000000f000000 - 0x000000000f006000 	C:\Program Files\NVIDIA Corporation\CoProcManager\_etoured.dll
+0x00007ffe578e0000 - 0x00007ffe57912000 	C:\Program Files\NVIDIA Corporation\CoProcManager\nvd3d9wrapx.dll
+0x00007ffe5bd40000 - 0x00007ffe5bf1a000 	C:\windows\system32\SETUPAPI.dll
+0x00007ffe596b0000 - 0x00007ffe596ff000 	C:\windows\system32\CFGMGR32.dll
+0x00007ffe57650000 - 0x00007ffe57672000 	C:\Program Files\NVIDIA Corporation\CoProcManager\nvdxgiwrapx.dll
+0x00007ffe571a0000 - 0x00007ffe5741a000 	C:\windows\WinSxS\amd64_microsoft.windows.common-controls_6595b64144ccf1df_6.0.9600.17810_none_6240b9c7ecbd0bda\COMCTL32.dll
+0x0000000077930000 - 0x0000000077a02000 	C:\Program Files\Java\jdk1.7.0_71\jre\bin\msvcr100.dll
+0x0000000076a10000 - 0x00000000771e3000 	C:\Program Files\Java\jdk1.7.0_71\jre\bin\server\jvm.dll
+0x00007ffe4dcc0000 - 0x00007ffe4dcc9000 	C:\windows\SYSTEM32\WSOCK32.dll
+0x00007ffe57420000 - 0x00007ffe57442000 	C:\windows\SYSTEM32\WINMM.dll
+0x00007ffe5c2c0000 - 0x00007ffe5c2c7000 	C:\windows\system32\PSAPI.DLL
+0x00007ffe5c090000 - 0x00007ffe5c0ea000 	C:\windows\system32\WS2_32.dll
+0x00007ffe57140000 - 0x00007ffe5716a000 	C:\windows\SYSTEM32\WINMMBASE.dll
+0x00007ffe5afd0000 - 0x00007ffe5afd9000 	C:\windows\system32\NSI.dll
+0x00007ffe58330000 - 0x00007ffe58358000 	C:\windows\SYSTEM32\DEVOBJ.dll
+0x0000000077920000 - 0x000000007792f000 	C:\Program Files\Java\jdk1.7.0_71\jre\bin\verify.dll
+0x00000000778f0000 - 0x0000000077918000 	C:\Program Files\Java\jdk1.7.0_71\jre\bin\java.dll
+0x00000000778d0000 - 0x00000000778e5000 	C:\Program Files\Java\jdk1.7.0_71\jre\bin\zip.dll
+
+VM Arguments:
+jvm_args: -Dfile.encoding=Cp1252 -Xbootclasspath:E:\adt-bundle\SDK\sdk\platforms\android-21\android.jar 
+java_command: com.nfc.model.Card
+Launcher Type: SUN_STANDARD
+
+Environment Variables:
+JAVA_HOME=C:\Program Files\Java\jdk1.7.0_71
+PATH=D:\app\Duong\product\11.2.0\dbhome_1\bin;C:\ProgramData\Oracle\Java\javapath;C:\Program Files (x86)\Intel\iCLS Client\;C:\Program Files\Intel\iCLS Client\;C:\windows\system32;C:\windows;C:\windows\System32\Wbem;C:\windows\System32\WindowsPowerShell\v1.0\;C:\Program Files\Intel\Intel(R) Management Engine Components\DAL;C:\Program Files\Intel\Intel(R) Management Engine Components\IPT;C:\Program Files (x86)\Intel\Intel(R) Management Engine Components\DAL;C:\Program Files (x86)\Intel\Intel(R) Management Engine Components\IPT;C:\Program Files\Lenovo\Fingerprint Manager Pro\;C:\Program Files\Condusiv Technologies\ExpressCache\;C:\ProgramData\Lenovo\ReadyApps;C:\Program Files\Java\jdk1.7.0_71\bin;E:\apache-maven-3.3.1\bin;C:\Program Files (x86)\Common Files\lenovo\easyplussdk\bin;C:\Program Files\Intel\WiFi\bin\;C:\Program Files\Common Files\Intel\WirelessCommon\;C:\Program Files (x86)\Lenovo\Password Manager\;C:\Program Files (x86)\Skype\Phone\;C:\Program Files\TortoiseSVN\bin;C:\Program Files\Intel\WiFi\bin\;C:\Program Files\Common Files\Intel\WirelessCommon\
+USERNAME=Clark
+OS=Windows_NT
+PROCESSOR_IDENTIFIER=Intel64 Family 6 Model 60 Stepping 3, GenuineIntel
+
+
+
+---------------  S Y S T E M  ---------------
+
+OS: Windows 8.1 , 64 bit Build 9600 
+
+CPU:total 4 (2 cores per cpu, 2 threads per core) family 6 model 60 stepping 3, cmov, cx8, fxsr, mmx, sse, sse2, sse3, ssse3, sse4.1, sse4.2, popcnt, avx, avx2, aes, erms, ht, tsc, tscinvbit
+
+Memory: 4k page, physical 16653932k(7288692k free), swap 19144300k(4705696k free)
+
+vm_info: Java HotSpot(TM) 64-Bit Server VM (24.71-b01) for windows-amd64 JRE (1.7.0_71-b14), built on Sep 26 2014 16:16:12 by "java_re" with unknown MS VC++:1600
+
+time: Tue Sep 08 16:36:52 2015
+elapsed time: 0 seconds
+

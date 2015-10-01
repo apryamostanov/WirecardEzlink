@@ -6,7 +6,7 @@ import com.wirecard.ezlink.fragment.ConfirmationFragment;
 import com.wirecard.ezlink.fragment.ContactFragment;
 import com.wirecard.ezlink.fragment.HelpFragment;
 import com.wirecard.ezlink.fragment.PaymentFragment;
-import com.wirecard.ezlink.fragment.TagCardFragment;
+import com.wirecard.ezlink.fragment.TapCardFragment;
 import com.wirecard.ezlink.fragment.TermsAndConditionsFragment;
 import com.wirecard.ezlink.navigationdrawer.DrawerItemCustomAdapter;
 import com.wirecard.ezlink.navigationdrawer.ObjectDrawerItem;
@@ -177,7 +177,7 @@ public class ConfirmationActivity extends FragmentActivity {
             fragment = new ConfirmationFragment();
             break;
         case 1:
-            fragment = new TagCardFragment();
+            fragment = new TapCardFragment();
             break;
         case 2:
         	fragment = new TermsAndConditionsFragment();
@@ -228,8 +228,7 @@ public class ConfirmationActivity extends FragmentActivity {
 							public void onClick(DialogInterface arg0, int arg) {
 								editor.clear();
 								editor.commit();
-								getIntent().setFlags(
-										Intent.FLAG_ACTIVITY_NO_HISTORY);
+								getIntent().setFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
 								finish();
 							}
 						}).create().show();
@@ -249,8 +248,8 @@ public class ConfirmationActivity extends FragmentActivity {
 
 	@Override
 	protected void onNewIntent(Intent intent) {
-		TagCardFragment tagCardFragment = (TagCardFragment) fragmentManager.findFragmentByTag("fragment1");
-		if(tagCardFragment != null) {
+		TapCardFragment tapCardFragment = (TapCardFragment) fragmentManager.findFragmentByTag("fragment1");
+		if(tapCardFragment != null) {
 		String action = intent.getAction();
 		if (NfcAdapter.ACTION_TECH_DISCOVERED.equals(action)) {
 			Tag tag = intent.getParcelableExtra(NfcAdapter.EXTRA_TAG);

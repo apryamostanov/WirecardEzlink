@@ -133,7 +133,7 @@ public interface StringConstants {
 		 String NO_CAMERA = "Cannot scan the Ez-Link QR Code. This mobile doesn\'t has camera";
 		String QRCODE_INVALID = "QRCode is invalid";
 		String QRCODE_BELONG_TO = "This QRCode doesn't belong to Ecommerce. Please scan right Ecommerce's QRCode";
-		String TRANX_FAILURE = "Processing Transaction Error";
+		String TRANX_FAILURE = "Processing Transaction Error. Please scan QRCode again.";
 		String CARD_DIFFIRENT = "Invalid Card. Please put correct card";
 		String AMT_ALERT = "Transaction amount is greater than S $500.00";
 		String INVALID_CARD = "Invalid Card";

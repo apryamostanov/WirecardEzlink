@@ -9,7 +9,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-public class TagCardFragment extends Fragment {
+public class TapCardFragment extends Fragment {
 	public static TextView error;
 	public static TextView error_content;
 	@Override

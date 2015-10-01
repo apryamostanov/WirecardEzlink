@@ -16,7 +16,7 @@ import com.wirecard.ezlink.constants.StringConstants;
 import com.wirecard.ezlink.fragment.ContactFragment;
 import com.wirecard.ezlink.fragment.HelpFragment;
 import com.wirecard.ezlink.fragment.PaymentFragment;
-import com.wirecard.ezlink.fragment.TagCardFragment;
+import com.wirecard.ezlink.fragment.TapCardFragment;
 import com.wirecard.ezlink.fragment.TermsAndConditionsFragment;
 import com.wirecard.ezlink.handle.CardInfoHandler;
 import com.wirecard.ezlink.handle.Util;
@@ -230,7 +230,7 @@ public class PaymentActivity extends FragmentActivity {
             fragment = new PaymentFragment();
             break;
         case 1:
-            fragment = new TagCardFragment();
+            fragment = new TapCardFragment();
             break;
         case 2:
         	fragment = new ContactFragment();
@@ -313,7 +313,7 @@ public class PaymentActivity extends FragmentActivity {
 			detectCard = true;
 			Tag tag = intent.getParcelableExtra(NfcAdapter.EXTRA_TAG);
 			final IsoDep isoDep = IsoDep.get(tag);
-			TagCardFragment tagCardFragment = (TagCardFragment) fragmentManager.findFragmentByTag("fragment1");
+			TapCardFragment tagCardFragment = (TapCardFragment) fragmentManager.findFragmentByTag("fragment1");
 			if(tagCardFragment != null) {
 				dialog = ProgressDialog.show(PaymentActivity.this, StringConstants.MessageRemarks.HOLD_CARD, StringConstants.MessageRemarks.TRANX_HISTORY, true);
 				new com.wirecard.ezlink.handle.IsoDepReaderTask(this, null, dialog, true, "PaymentActivity").execute(isoDep);

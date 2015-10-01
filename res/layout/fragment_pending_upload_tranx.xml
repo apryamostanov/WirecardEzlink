@@ -1,14 +1,42 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent" 
-    android:background="#004E98">
+    android:layout_height="match_parent"
+    android:background="#004E98" >
 
     <TextView
         android:id="@+id/status"
-        android:layout_width="fill_parent"
-        android:layout_height="fill_parent"
-        android:gravity="center" android:text=""
-        android:textSize="16sp" />
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:layout_centerHorizontal="true"
+        android:gravity="center"
+        android:textColor="@color/red"
+        android:textSize="18sp" />
+
+    <TextView
+        android:id="@+id/space"
+        android:layout_width="match_parent"
+        android:layout_below="@+id/status"
+        android:layout_height="30dp" />
+
+    <TextView
+        android:id="@+id/tranx_label"
+        android:layout_width="match_parent"
+        android:layout_height="30dp"
+        android:layout_below="@+id/space"
+        android:layout_centerHorizontal="true"
+        android:text="@string/tranx_label"
+        android:visibility="gone"
+        android:layout_marginLeft="4dp"
+        android:textStyle="bold" />
+
+    <ListView
+        android:id="@+id/listview"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@+id/tranx_label"
+        android:layout_margin="4dp"
+        android:dividerHeight="1dp" >
+    </ListView>
 
 </RelativeLayout>

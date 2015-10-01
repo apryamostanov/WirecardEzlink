@@ -24,7 +24,8 @@ import com.wirecard.ezlink.constants.StringConstants;
 import com.wirecard.ezlink.fragment.HelpFragment;
 import com.wirecard.ezlink.fragment.PendingUploadTranxFragment;
 import com.wirecard.ezlink.fragment.ScanFragment;
-import com.wirecard.ezlink.fragment.TagCardFragment;
+import com.wirecard.ezlink.fragment.TapCardFragment;
+import com.wirecard.ezlink.handle.ReceiptAsyncTask;
 import com.wirecard.ezlink.handle.SoundControl;
 import com.wirecard.ezlink.handle.Util;
 import com.wirecard.ezlink.handle.ConnectionDetector;
@@ -76,9 +77,10 @@ public class SecondActivity extends FragmentActivity implements ActionBar.TabLis
 	private String[][] techList;
 	private NfcAdapter mNfcAdapter = null;
 	private boolean uploadToHost = false;
-	private Dialog dialog;
 	private ConnectionDetector cd;
 	private boolean firstTime = true;
+	public static List<ReceiptRequest> pendingUploadList;
+	public static String pendingUploadStatus;
 	
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -130,8 +132,16 @@ public class SecondActivity extends FragmentActivity implements ActionBar.TabLis
 		
 		// check there are any Receipt requests have send to host yet.
 		DBHelper db = new DBHelper(this);
-		List<ReceiptRequest> list = db.getAllReceiptRequest();
-		uploadToHost = list.isEmpty() ? false : true;
+		pendingUploadList = db.getAllReceiptRequest();
+		uploadToHost = pendingUploadList.isEmpty() ? false : true;
+		
+		if(uploadToHost == true) {
+			ProgressDialog dialog = ProgressDialog.show(SecondActivity.this, StringConstants.MessageRemarks.THERE_ARE + pendingUploadList.size() 
+					+ StringConstants.MessageRemarks.RECEIPT_REQUEST_UPLOAD, StringConstants.MessageRemarks.PLEASE_WAIT, true);
+			new ReceiptAsyncTask(SecondActivity.this, dialog).execute(pendingUploadList);
+		} else {
+			pendingUploadStatus = "There is(are) no pending upload transaction(s)";
+		}
 	
 		Bundle args = getIntent().getExtras();
 		
@@ -178,7 +188,7 @@ public class SecondActivity extends FragmentActivity implements ActionBar.TabLis
 				fragment = new ScanFragment();
 				break;
 			case 1:
-				fragment = new TagCardFragment();
+				fragment = new TapCardFragment();
 				break;
 			case 2:
 				fragment = new PendingUploadTranxFragment();
@@ -211,9 +221,9 @@ public class SecondActivity extends FragmentActivity implements ActionBar.TabLis
 	protected void onNewIntent(Intent intent) {
 		Fragment fragment = getSupportFragmentManager().findFragmentByTag("android:switcher:" + R.id.pager + ":" + mViewPager.getCurrentItem());
 		String fragmentName = fragment.toString();
-		if(fragmentName.contains("TagCardFragment")) {
+		if(fragmentName.contains("TapCardFragment")) {
 			((Vibrator)getSystemService(Context.VIBRATOR_SERVICE)).vibrate(100L);
-			Log.d("tagCardFragment is ", "not null");
+			Log.d("tapCardFragment is ", "not null");
 			handleIntent(intent);
 		}
 	}

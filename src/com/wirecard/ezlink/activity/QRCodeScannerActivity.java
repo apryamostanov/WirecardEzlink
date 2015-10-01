@@ -152,6 +152,7 @@ public class QRCodeScannerActivity extends Activity {
 		String encrypt = "";
 		try {
 			if(contents != null) {
+				QRCode.getNew();
 				qrCode = QRCode.getInstance();
 				qrCode.getQRCodeDetail(contents);
 				merchantNo = qrCode.getQR_MER_ID();

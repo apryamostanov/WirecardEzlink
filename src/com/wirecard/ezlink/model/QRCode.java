@@ -30,6 +30,11 @@ public class QRCode implements Serializable{
 	      return qrCode;
 	}
 	
+	public static QRCode getNew() {
+		qrCode = new QRCode();
+		return qrCode;
+	}
+	
 	public void partDecrypt(String decryptContent) {
 		String part[] = decryptContent.split("&");
 		setDECRYPT_QR_MER_ID(part[0]);

@@ -37,7 +37,7 @@ import com.wirecard.ezlink.activity.SecondActivity;
 import com.wirecard.ezlink.activity.TranxHistoryActivity;
 import com.wirecard.ezlink.constants.StringConstants;
 import com.wirecard.ezlink.fragment.NFCFragment;
-import com.wirecard.ezlink.fragment.TagCardFragment;
+import com.wirecard.ezlink.fragment.TapCardFragment;
 import com.wirecard.ezlink.model.QRCode;
 import com.wirecard.ezlink.webservices.receipt.RecieptReqError;
 
@@ -390,8 +390,8 @@ public class IsoDepReaderTask extends AsyncTask<IsoDep, Void, String> {
 		if(null != response) {
 			detectCard = false;
 			if(getTranxHistory == true) {
-				TagCardFragment.error.setVisibility(View.VISIBLE);
-				TagCardFragment.error_content.setText(response);
+				TapCardFragment.error.setVisibility(View.VISIBLE);
+				TapCardFragment.error_content.setText(response);
 			} else {
 				NFCFragment.error.setVisibility(View.VISIBLE);
 				NFCFragment.error_content.setText(response);
@@ -412,6 +412,7 @@ public class IsoDepReaderTask extends AsyncTask<IsoDep, Void, String> {
 			}
 		} else {
 			cancelCountDownTimer();
+			QRCode.getNew();
 		}
 		if (dialog != null && dialog.isShowing())
         {

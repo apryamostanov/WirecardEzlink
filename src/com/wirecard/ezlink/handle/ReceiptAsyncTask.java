@@ -7,6 +7,7 @@ import android.content.Context;
 import android.os.AsyncTask;
 import android.util.Log;
 
+import com.wirecard.ezlink.activity.SecondActivity;
 import com.wirecard.ezlink.model.ReceiptRequest;
 
 public class ReceiptAsyncTask extends AsyncTask<List<ReceiptRequest>, Integer, Boolean> {
@@ -45,9 +46,9 @@ public class ReceiptAsyncTask extends AsyncTask<List<ReceiptRequest>, Integer, B
 	@Override
 	protected void onPostExecute(Boolean result) {
 		if(result == false) {
-			status.setText("There is some problems to upload pending transaction");
+			SecondActivity.pendingUploadStatus = "There is problem to upload pending transaction";
 		} else {
-			status.setText("There is no pending upload transaction");
+			SecondActivity.pendingUploadStatus = "There is(are) no pending upload transaction(s)";
 		}
 		if (dialog != null && dialog.isShowing()) {
 			dialog.dismiss();

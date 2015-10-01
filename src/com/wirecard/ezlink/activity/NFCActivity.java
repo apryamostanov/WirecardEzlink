@@ -7,7 +7,7 @@ import com.example.R;
 import com.wirecard.ezlink.constants.StringConstants;
 import com.wirecard.ezlink.fragment.HelpFragment;
 import com.wirecard.ezlink.fragment.NFCFragment;
-import com.wirecard.ezlink.fragment.TagCardFragment;
+import com.wirecard.ezlink.fragment.TapCardFragment;
 import com.wirecard.ezlink.fragment.TermsAndConditionsFragment;
 import com.wirecard.ezlink.handle.CardInfoHandler;
 import com.wirecard.ezlink.handle.Util;
@@ -209,7 +209,7 @@ public class NFCActivity extends FragmentActivity {
             fragment = new NFCFragment();
             break;
         case 1:
-            fragment = new TagCardFragment();
+            fragment = new TapCardFragment();
             break;
         case 2:
         	fragment = new TermsAndConditionsFragment();
@@ -281,10 +281,10 @@ public class NFCActivity extends FragmentActivity {
 			detectCard = true;
 			Tag tag = intent.getParcelableExtra(NfcAdapter.EXTRA_TAG);
 			IsoDep isoDep = IsoDep.get(tag);
-			TagCardFragment tagCardFragment = (TagCardFragment) fragmentManager.findFragmentByTag("fragment1");
-			if(tagCardFragment != null) {
+			TapCardFragment tapCardFragment = (TapCardFragment) fragmentManager.findFragmentByTag("fragment1");
+			if(tapCardFragment != null) {
 				dialog = ProgressDialog.show(NFCActivity.this, StringConstants.MessageRemarks.HOLD_CARD, StringConstants.MessageRemarks.SCANNING, true);
-				Log.d("tagCardFragment is ", "not null");
+				Log.d("tapCardFragment is ", "not null");
 				isoDepReaderTask = new IsoDepReaderTask(this, sharedpreferences, dialog, true, "NFCActivity");
 			} else {
 				dialog = ProgressDialog.show(NFCActivity.this, StringConstants.MessageRemarks.PROCESSING, StringConstants.MessageRemarks.SCANNING, true);
